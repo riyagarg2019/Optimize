@@ -5,4 +5,8 @@ package com.touch;
  */
 
 public interface PlaceTouchHelperAdapter {
+    void onPlaceDismiss(int position);
+
+    void onPlaceMove(int fromPosition, int toPosition);
+
 }
