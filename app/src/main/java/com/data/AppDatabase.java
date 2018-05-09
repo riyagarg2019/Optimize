@@ -9,7 +9,7 @@ import android.arch.persistence.room.RoomDatabase;
  * Created by myradeng on 4/14/18.
  */
 
-@Database(entities = {Place.class}, version = 1)
+@Database(entities = {Place.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase INSTANCE;
