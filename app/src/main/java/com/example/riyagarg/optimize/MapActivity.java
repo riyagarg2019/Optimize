@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.data.AppDatabase;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
@@ -23,12 +24,15 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
 public class MapActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
+
+    public interface PlaceHandler {
+
+    }
 
     private GoogleMap googleMap;
 
@@ -67,7 +71,7 @@ public class MapActivity extends AppCompatActivity
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                updateMap(place.getLatLng());
+                updateMap(place);
             }
 
             @Override
@@ -77,9 +81,9 @@ public class MapActivity extends AppCompatActivity
         });
     }
 
-    private void updateMap(LatLng latLng) {
-        googleMap.addMarker(new MarkerOptions().position(latLng).title("Marker in hello"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 7.0f));
+    private void updateMap(Place place) {
+        googleMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getAddress().toString()));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 7.0f));
     }
 
     @Override
@@ -142,5 +146,37 @@ public class MapActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
+    }
+
+    public void onNewPlaceCreated(final String location, final Double lat, final Double lng,
+                                  final String description) {
+        new Thread(){
+            @Override
+            public void run() {
+
+                final com.data.Place place = new Place(location, lat, lng, description);
+                long id = AppDatabase.getAppDatabase(MainActivity.this).placeDao().insertPlace(place);
+                place.setPlaceId(id);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        placeRecyclerAdapter.addPlace(place);
+                    }
+                });
+            }
+        }.start();
+    }
+
+    public void onPlaceUpdated(final Place place) {
+        new Thread() {
+            public void run() {
+                AppDatabase.getAppDatabase(MainActivity.this).placeDao().update(place);
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        placeRecyclerAdapter.updatePlace(place);
+                    }
+                });
+            }
+        }.start();
     }
 }
