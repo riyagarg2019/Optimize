@@ -30,10 +30,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
-    public interface PlaceHandler {
-
-    }
-
     private GoogleMap googleMap;
 
     @Override
@@ -146,37 +142,5 @@ public class MapActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-    }
-
-    public void onNewPlaceCreated(final String location, final Double lat, final Double lng,
-                                  final String description) {
-        new Thread(){
-            @Override
-            public void run() {
-
-                final com.data.Place place = new Place(location, lat, lng, description);
-                long id = AppDatabase.getAppDatabase(MainActivity.this).placeDao().insertPlace(place);
-                place.setPlaceId(id);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        placeRecyclerAdapter.addPlace(place);
-                    }
-                });
-            }
-        }.start();
-    }
-
-    public void onPlaceUpdated(final Place place) {
-        new Thread() {
-            public void run() {
-                AppDatabase.getAppDatabase(MainActivity.this).placeDao().update(place);
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        placeRecyclerAdapter.updatePlace(place);
-                    }
-                });
-            }
-        }.start();
     }
 }

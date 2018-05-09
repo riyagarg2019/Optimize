@@ -9,19 +9,19 @@ import android.arch.persistence.room.Update;
 import java.util.List;
 
 @Dao
-public interface PlaceDAO {
-    @Query("SELECT * FROM place")
-    List<Place> getAll();
+public interface DestinationDAO {
+    @Query("SELECT * FROM destination")
+    List<Destination> getAll();
 
     @Insert
-    long insertPlace(Place place);
+    long insertDestination(Destination dest);
 
     @Delete
-    void delete(Place place);
+    void delete(Destination dest);
 
     @Update
-    void update(Place place);
+    void update(Destination dest);
 
-    @Query("DELETE FROM place")
+    @Query("DELETE FROM destination")
     void nukeTable();
 }

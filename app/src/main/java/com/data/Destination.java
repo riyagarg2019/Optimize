@@ -7,12 +7,12 @@ import android.arch.persistence.room.PrimaryKey;
 import java.io.Serializable;
 
 @Entity
-public class Place implements Serializable {
+public class Destination implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
-    private long placeId;
+    private long destinationId;
 
-    public Place(String location, Double lat, Double lng, String description) {
+    public Destination(String location, Double lat, Double lng, String description) {
         this.location = location;
         this.lat = lat;
         this.lng = lng;
@@ -28,12 +28,12 @@ public class Place implements Serializable {
     @ColumnInfo(name = "description")
     private String description;
 
-    public long getPlaceId() {
-        return placeId;
+    public long getDestinationId() {
+        return destinationId;
     }
 
-    public void setPlaceId(long placeId) {
-        this.placeId = placeId;
+    public void setDestinationId(long destinationId) {
+        this.destinationId = destinationId;
     }
 
     public String getLocation() {

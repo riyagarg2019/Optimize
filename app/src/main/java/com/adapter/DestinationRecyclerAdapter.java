@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.data.AppDatabase;
-import com.data.Place;
+import com.data.Destination;
 import com.example.riyagarg.optimize.R;
-import com.touch.PlaceTouchHelperAdapter;
+import com.touch.DestinationTouchHelperAdapter;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,19 +19,19 @@ import java.util.List;
  * Created by riyagarg on 5/9/18.
  */
 
-public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdapter.ViewHolder> implements PlaceTouchHelperAdapter {
+public class DestinationRecyclerAdapter extends RecyclerView.Adapter<DestinationRecyclerAdapter.ViewHolder>
+        implements DestinationTouchHelperAdapter {
 
-
-    private List<Place> placeList;
+    private List<Destination> destinationList;
     private Context context;
 
-    public PlaceRecyclerAdapter(List<Place> places, Context context){
-        placeList = places;
+    public DestinationRecyclerAdapter(List<Destination> dests, Context context){
+        destinationList = dests;
         this.context = context;
     }
 
-    public void deletePlaces() {
-        placeList.clear();
+    public void deleteDestinations() {
+        destinationList.clear();
         notifyDataSetChanged();
     }
 
@@ -45,26 +45,26 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        holder.tvLocation.setText(placeList.get(holder.getAdapterPosition()).getLocation());
-        holder.tvDescription.setText(placeList.get(holder.getAdapterPosition()).getDescription());
+        holder.tvLocation.setText(destinationList.get(holder.getAdapterPosition()).getLocation());
+        holder.tvDescription.setText(destinationList.get(holder.getAdapterPosition()).getDescription());
 
     }
 
-    public void addPlace(Place place) {
-        placeList.add(place);
+    public void addDestination(Destination dest) {
+        destinationList.add(dest);
         notifyDataSetChanged();
     }
 
-    public void updatePlace(Place place) {
-        int editPos = findPlaceIndexByPlaceId(place.getPlaceId());
-        placeList.set(editPos,place);
+    public void updateDestination(Destination dest) {
+        int editPos = findPlaceIndexByDestinationId(dest.getDestinationId());
+        destinationList.set(editPos,dest);
         notifyItemChanged(editPos);
 
     }
 
-    private int findPlaceIndexByPlaceId(long todoId){
-        for(int i = 0; i < placeList.size(); i++){
-            if(placeList.get(i).getPlaceId() == todoId){
+    private int findPlaceIndexByDestinationId(long todoId){
+        for(int i = 0; i < destinationList.size(); i++){
+            if(destinationList.get(i).getDestinationId() == todoId){
                 return i;
             }
         }
@@ -73,33 +73,33 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
 
     @Override
     public int getItemCount() {
-        return placeList.size();
+        return destinationList.size();
     }
 
     @Override
-    public void onPlaceDismiss(int position) {
+    public void onDestinationDismiss(int position) {
         //should remove item at position from list
-        final Place Remove = placeList.remove(position);
+        final Destination Remove = destinationList.remove(position);
 
         notifyItemRemoved(position);
         new Thread(){
             @Override
             public void run() {
-                AppDatabase.getAppDatabase(context).placeDao().delete(Remove);
+                AppDatabase.getAppDatabase(context).destinationDao().delete(Remove);
             }
         }.start();
 
     }
 
     @Override
-    public void onPlaceMove(int fromPosition, int toPosition) {
+    public void onDestinationMove(int fromPosition, int toPosition) {
         if (fromPosition < toPosition) {
             for (int i = fromPosition; i < toPosition; i++) {
-                Collections.swap(placeList, i, i + 1);
+                Collections.swap(destinationList, i, i + 1);
             }
         } else {
             for (int i = fromPosition; i > toPosition; i--) {
-                Collections.swap(placeList, i, i - 1);
+                Collections.swap(destinationList, i, i - 1);
             }
         }
         notifyItemMoved(fromPosition, toPosition);

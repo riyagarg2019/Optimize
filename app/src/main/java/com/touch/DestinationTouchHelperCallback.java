@@ -7,12 +7,12 @@ import android.support.v7.widget.helper.ItemTouchHelper;
  * Created by riyagarg on 5/9/18.
  */
 
-public class PlaceTouchHelperCallback extends ItemTouchHelper.Callback{
+public class DestinationTouchHelperCallback extends ItemTouchHelper.Callback{
 
-    private PlaceTouchHelperAdapter placeTouchHelperAdapter; //sending to interface
+    private DestinationTouchHelperAdapter destinationTouchHelperAdapter; //sending to interface
 
-    public PlaceTouchHelperCallback(PlaceTouchHelperAdapter placeTouchHelperAdapter) { //constructer setting field
-        this.placeTouchHelperAdapter = placeTouchHelperAdapter;
+    public DestinationTouchHelperCallback(DestinationTouchHelperAdapter destinationTouchHelperAdapter) { //constructer setting field
+        this.destinationTouchHelperAdapter = destinationTouchHelperAdapter;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class PlaceTouchHelperCallback extends ItemTouchHelper.Callback{
     @Override
     public boolean onMove(RecyclerView recyclerView,
                           RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) { //which item is moved and where
-        placeTouchHelperAdapter.onPlaceMove( //from and to position
+        destinationTouchHelperAdapter.onDestinationMove( //from and to position
                 viewHolder.getAdapterPosition(),
                 target.getAdapterPosition());
         return true;
@@ -43,6 +43,6 @@ public class PlaceTouchHelperCallback extends ItemTouchHelper.Callback{
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) { //when you swipe out an item
-        placeTouchHelperAdapter.onPlaceDismiss(viewHolder.getAdapterPosition()); //send result to interface that this item is swiped
+        destinationTouchHelperAdapter.onDestinationDismiss(viewHolder.getAdapterPosition()); //send result to interface that this item is swiped
     }
 }

@@ -14,17 +14,17 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.adapter.PlaceRecyclerAdapter;
+import com.adapter.DestinationRecyclerAdapter;
 import com.data.AppDatabase;
-import com.data.Place;
-import com.touch.PlaceTouchHelperCallback;
+import com.data.Destination;
+import com.touch.DestinationTouchHelperCallback;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MapActivity.PlaceHandler {
+public class MainActivity extends AppCompatActivity {
 
     public static final String KEY_FIRST = "KEY_FIRST";
-    private PlaceRecyclerAdapter placeRecyclerAdapter;
+    private DestinationRecyclerAdapter destinationRecyclerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements MapActivity.Place
         RecyclerView recyclerView = findViewById(R.id.recycler);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        initPlaces(recyclerView);
+        initDestinations(recyclerView);
     }
 
     public boolean isFirstRun() {
@@ -55,19 +55,19 @@ public class MainActivity extends AppCompatActivity implements MapActivity.Place
         editor.commit();
     }
 
-    public void initPlaces(final RecyclerView recyclerView) {
+    public void initDestinations(final RecyclerView recyclerView) {
         new Thread() {
             @Override
             public void run() {
-                final List<Place> places =
-                        AppDatabase.getAppDatabase(MainActivity.this).placeDao().getAll();
+                final List<Destination> dests =
+                        AppDatabase.getAppDatabase(MainActivity.this).destinationDao().getAll();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        placeRecyclerAdapter = new PlaceRecyclerAdapter(places, MainActivity.this);
-                        recyclerView.setAdapter(placeRecyclerAdapter);
+                        destinationRecyclerAdapter = new DestinationRecyclerAdapter(dests, MainActivity.this);
+                        recyclerView.setAdapter(destinationRecyclerAdapter);
                         ItemTouchHelper.Callback callback =
-                                new PlaceTouchHelperCallback(placeRecyclerAdapter);
+                                new DestinationTouchHelperCallback(destinationRecyclerAdapter);
                         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
                         touchHelper.attachToRecyclerView(recyclerView);
                     }
@@ -89,54 +89,51 @@ public class MainActivity extends AppCompatActivity implements MapActivity.Place
             return true;
         }
         if (id == R.id.delete_all) {
-            onDeletePlaces();
+            onDeleteDestinations();
         }
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onNewPlaceCreated(final String location, final Double lat, final Double lng,
+    public void onNewDestinationCreated(final String location, final Double lat, final Double lng,
                                   final String description) {
         new Thread(){
             @Override
             public void run() {
 
-                final Place place=  new Place(location, lat, lng, description);
-                long id = AppDatabase.getAppDatabase(MainActivity.this).placeDao().insertPlace(place);
-                place.setPlaceId(id);
+                final Destination dest = new Destination(location, lat, lng, description);
+                long id = AppDatabase.getAppDatabase(MainActivity.this).destinationDao().insertDestination(dest);
+                dest.setDestinationId(id);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        placeRecyclerAdapter.addPlace(place);
+                        destinationRecyclerAdapter.addDestination(dest);
                     }
                 });
             }
         }.start();
     }
 
-    @Override
-    public void onPlaceUpdated(final Place place) {
+    public void onDestinationUpdated(final Destination dest) {
         new Thread() {
             public void run() {
-                AppDatabase.getAppDatabase(MainActivity.this).placeDao().update(place);
+                AppDatabase.getAppDatabase(MainActivity.this).destinationDao().update(dest);
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        placeRecyclerAdapter.updatePlace(place);
+                        destinationRecyclerAdapter.updateDestination(dest);
                     }
                 });
             }
         }.start();
     }
 
-    @Override
-    public void onDeletePlaces() {
-        placeRecyclerAdapter.deletePlaces();
+    public void onDeleteDestinations() {
+        destinationRecyclerAdapter.deleteDestinations();
         new Thread() {
             public void run() {
-                AppDatabase.getAppDatabase(MainActivity.this).placeDao().nukeTable();
+                AppDatabase.getAppDatabase(MainActivity.this).destinationDao().nukeTable();
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        placeRecyclerAdapter.deletePlaces();
+                        destinationRecyclerAdapter.deleteDestinations();
                     }
                 });
             }

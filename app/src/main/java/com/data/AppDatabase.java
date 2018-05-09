@@ -9,17 +9,17 @@ import android.arch.persistence.room.RoomDatabase;
  * Created by myradeng on 4/14/18.
  */
 
-@Database(entities = {Place.class}, version = 1, exportSchema = false)
+@Database(entities = {Destination.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase INSTANCE;
 
-    public abstract PlaceDAO placeDao();
+    public abstract DestinationDAO destinationDao();
 
     public static AppDatabase getAppDatabase(Context context) {
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                    AppDatabase.class, "Places").build();
+                    AppDatabase.class, "Destinations").build();
         }
         return INSTANCE;
     }
