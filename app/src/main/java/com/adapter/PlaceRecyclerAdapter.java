@@ -30,6 +30,10 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
         this.context = context;
     }
 
+    public void deletePlaces() {
+        placeList.clear();
+        notifyDataSetChanged();
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
