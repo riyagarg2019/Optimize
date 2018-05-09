@@ -20,6 +20,8 @@ import java.util.List;
  */
 
 public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdapter.ViewHolder> implements PlaceTouchHelperAdapter {
+
+
     private List<Place> placeList;
     private Context context;
 
@@ -39,7 +41,30 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
+        holder.tvLocation.setText(placeList.get(holder.getAdapterPosition()).getLocation());
+        holder.tvDescription.setText(placeList.get(holder.getAdapterPosition()).getDescription());
 
+    }
+
+    public void addPlace(Place place) {
+        placeList.add(place);
+        notifyDataSetChanged();
+    }
+
+    public void updatePlace(Place place) {
+        int editPos = findPlaceIndexByPlaceId(place.getPlaceId());
+        placeList.set(editPos,place);
+        notifyItemChanged(editPos);
+
+    }
+
+    private int findPlaceIndexByPlaceId(long todoId){
+        for(int i = 0; i < placeList.size(); i++){
+            if(placeList.get(i).getPlaceId() == todoId){
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
@@ -78,14 +103,15 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView tvDescrip;
-        private TextView tvPrice;
+        private TextView tvLocation;
+        private TextView tvDescription;
+
 
         public ViewHolder(View itemView){
             super(itemView);
+            tvLocation = itemView.findViewById(R.id.tvLocation);
+            tvDescription = itemView.findViewById(R.id.tvDescription);
 
-            //tvDescrip = itemView.findViewById(R.id.tvDescrip);
-            //tvPrice = itemView.findViewById(R.id.tvPrice);
 
         }
     }
