@@ -35,6 +35,14 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         setRecyclerView();
         saveThatItWasStarted();
+
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                
+            }
+        });
     }
 
     private void setRecyclerView() {
