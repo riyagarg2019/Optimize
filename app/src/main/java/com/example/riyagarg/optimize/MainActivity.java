@@ -1,5 +1,6 @@
 package com.example.riyagarg.optimize;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -40,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
+                Intent intent = new Intent(MainActivity.this, ResultsActivity.class);
+                startActivity(intent);
             }
         });
     }
