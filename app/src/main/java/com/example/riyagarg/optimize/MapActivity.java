@@ -1,5 +1,6 @@
 package com.example.riyagarg.optimize;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.data.AppDatabase;
+import com.data.Destination;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
@@ -31,6 +33,7 @@ public class MapActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     private GoogleMap googleMap;
+    private Place currentPlace;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,15 +41,7 @@ public class MapActivity extends AppCompatActivity
         setContentView(R.layout.activity_map);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        initFAB();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -57,17 +52,25 @@ public class MapActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        initMap();
+        initPlaceSearch();
+    }
+
+    private void initMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
 
+    private void initPlaceSearch() {
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                updateMap(place);
+                currentPlace = place;
+                updateMap();
             }
 
             @Override
@@ -77,9 +80,33 @@ public class MapActivity extends AppCompatActivity
         });
     }
 
-    private void updateMap(Place place) {
-        googleMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getAddress().toString()));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 7.0f));
+    private void initFAB() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Destination newDestination = new Destination(currentPlace.getName().toString(),
+                        currentPlace.getLatLng().latitude,
+                        currentPlace.getLatLng().longitude,
+                        "");
+                addDestinationToDatabase(newDestination);
+            }
+        });
+    }
+
+    private void addDestinationToDatabase(final Destination destination) {
+        new Thread() {
+            @Override
+            public void run() {
+                long id = AppDatabase.getAppDatabase(MapActivity.this).destinationDao().insertDestination(destination);
+                destination.setDestinationId(id);
+            }
+        }.start();
+    }
+
+    private void updateMap() {
+        googleMap.addMarker(new MarkerOptions().position(currentPlace.getLatLng()).title(currentPlace.getAddress().toString()));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPlace.getLatLng(), 7.0f));
     }
 
     @Override
@@ -120,18 +147,10 @@ public class MapActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        if (id == R.id.nav_to_main_activity) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
