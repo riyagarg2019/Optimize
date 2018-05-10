@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                final Destination dest = new Destination(location, lat, lng, description);
+                final Destination dest = new Destination(location, lat, lng);
                 long id = AppDatabase.getAppDatabase(MainActivity.this).destinationDao().insertDestination(dest);
                 dest.setDestinationId(id);
                 runOnUiThread(new Runnable() {
