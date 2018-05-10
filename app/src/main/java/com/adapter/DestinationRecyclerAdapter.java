@@ -46,7 +46,6 @@ public class DestinationRecyclerAdapter extends RecyclerView.Adapter<Destination
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         holder.tvLocation.setText(destinationList.get(holder.getAdapterPosition()).getLocation());
-        holder.tvDescription.setText(destinationList.get(holder.getAdapterPosition()).getDescription());
 
     }
 

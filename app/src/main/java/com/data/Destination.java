@@ -12,11 +12,10 @@ public class Destination implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private long destinationId;
 
-    public Destination(String location, Double lat, Double lng, String description) {
+    public Destination(String location, Double lat, Double lng) {
         this.location = location;
         this.lat = lat;
         this.lng = lng;
-        this.description = description;
     }
 
     @ColumnInfo(name = "location")
@@ -25,8 +24,6 @@ public class Destination implements Serializable {
     private Double lat;
     @ColumnInfo(name = "lng")
     private Double lng;
-    @ColumnInfo(name = "description")
-    private String description;
 
     public long getDestinationId() {
         return destinationId;
@@ -58,13 +55,5 @@ public class Destination implements Serializable {
 
     public void setLng(Double lng) {
         this.lng = lng;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 }
