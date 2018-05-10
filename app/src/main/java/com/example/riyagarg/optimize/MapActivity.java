@@ -44,6 +44,9 @@ public class MapActivity extends AppCompatActivity
     private GoogleMap googleMap;
     private Place currentPlace;
 
+    // TODO: handle destCount to be limited to 10 and update accordingly
+    private int destCount = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +64,14 @@ public class MapActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MapActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
         initMap();
         initPlaceSearch();
     }
@@ -78,16 +89,21 @@ public class MapActivity extends AppCompatActivity
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                currentPlace = place;
-                updateMap();
-                Destination newDestination = new Destination(currentPlace.getName().toString(),
-                        currentPlace.getLatLng().latitude,
-                        currentPlace.getLatLng().longitude);
-                Bundle dest = new Bundle();
-                dest.putSerializable("DEST", newDestination);
-                DialogFragment newDialog = new AddDestinationDialog();
-                newDialog.setArguments(dest);
-                newDialog.show(getSupportFragmentManager(), "Add Destination");
+                if (destCount == 3) {
+                    Toast.makeText(getApplicationContext(), "Max 10 destinations. Return to main and delete or proceed!", Toast.LENGTH_LONG).show();
+                } else {
+                    currentPlace = place;
+                    updateMap();
+                    Destination newDestination = new Destination(currentPlace.getName().toString(),
+                            currentPlace.getLatLng().latitude,
+                            currentPlace.getLatLng().longitude);
+                    destCount++;
+                    Bundle dest = new Bundle();
+                    dest.putSerializable("DEST", newDestination);
+                    DialogFragment newDialog = new AddDestinationDialog();
+                    newDialog.setArguments(dest);
+                    newDialog.show(getSupportFragmentManager(), "Add Destination");
+                }
             }
 
             @Override
