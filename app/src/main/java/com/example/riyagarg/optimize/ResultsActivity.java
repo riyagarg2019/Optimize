@@ -1,5 +1,6 @@
 package com.example.riyagarg.optimize;
 
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -8,14 +9,19 @@ import android.location.LocationManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.adapter.DestinationRecyclerAdapter;
+import com.data.Destination;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,6 +31,8 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
         OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private List<Destination> destinationList = null;
+    private List<Marker> markerList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,17 +76,44 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        LatLng hungary = new LatLng(47, 19);
-        Marker myMarker = mMap.addMarker(
-                new MarkerOptions().
-                        position(hungary).
-                        title("Marker in Hungary").
-                        snippet("This is a marker"));
-        myMarker.setDraggable(true);
+        //destinationList = getParentActivityIntent()
 
 
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+        //destinationList = destinationRecyclerAdapter.getDestinationList(); //not a real line
+        Destination eger = new Destination("Eger", 47.9, 20.37);
+        Destination budapest = new Destination("Budapest", 47.5, 19.04);
+        Destination bratislava = new Destination("Bratislava", 48.15, 17.11);
+
+        //destinationList.add(0, eger);
+        //destinationList.add(1, budapest);
+
+        //destinationList.add(new Destination("Eger", 47.9, 20.37));
+        //destinationList.add(new Destination("Budapest", 47.5, 19.04));
+
+        /*for(int i = 0; i < destinationList.size(); i++){
+            LatLng position = new LatLng(destinationList.get(i).getLat(), destinationList.get(i).getLng());
+            Marker myMarker = mMap.addMarker(new MarkerOptions().position(position).title(destinationList.get(i).getLocation()));
+        }*/
+
+
+        LatLng position = new LatLng(eger.getLat(), eger.getLng());
+        Marker myMarker = mMap.addMarker(new MarkerOptions().position(position).title(eger.getLocation()));
+
+        LatLng position2 = new LatLng(budapest.getLat(), budapest.getLng());
+        Marker myMarker2 = mMap.addMarker(new MarkerOptions().position(position2).title(budapest.getLocation()));
+
+        LatLng position3 = new LatLng(bratislava.getLat(), bratislava.getLng());
+        Marker myMarker3 = mMap.addMarker(new MarkerOptions().position(position3).title(bratislava.getLocation()));
+
+
+
+        PolylineOptions polyLineOpts = new PolylineOptions().add(position, position2, position3, position); //draw lines based on optimized positions
+        Polyline polyline = mMap.addPolyline(polyLineOpts);
+        polyline.setColor(Color.GREEN);
+
+
+
+        /*mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
                 try {
@@ -101,7 +136,7 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
                     ex.printStackTrace();
                 }
             }
-        });
+        });*/
 
 
 
@@ -124,7 +159,14 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
         });
 
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(hungary));
+       // mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        builder.include(position);
+        builder.include(position2);
+        builder.include(position3);
+        LatLngBounds bounds = builder.build();
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
 
         mMap.setTrafficEnabled(true);
         //mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);

@@ -35,6 +35,10 @@ public class DestinationRecyclerAdapter extends RecyclerView.Adapter<Destination
         notifyDataSetChanged();
     }
 
+    public List<Destination> getDestinationList() {
+        return destinationList;
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View viewRow = LayoutInflater.from(parent.getContext()).inflate(R.layout.place_row, parent, false);
