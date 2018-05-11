@@ -24,4 +24,7 @@ public interface DestinationDAO {
 
     @Query("DELETE FROM destination")
     void nukeTable();
+
+    @Query("SELECT COUNT(*) from destination")
+    int getNumberOfRows();
 }

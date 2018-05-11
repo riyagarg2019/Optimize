@@ -43,9 +43,7 @@ public class MapActivity extends AppCompatActivity
 
     private GoogleMap googleMap;
     private Place currentPlace;
-
-    // TODO: handle destCount to be limited to 10 and update accordingly
-    private int destCount = 0;
+    private int destCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +72,21 @@ public class MapActivity extends AppCompatActivity
         });
         initMap();
         initPlaceSearch();
+        new Thread() {
+            public void run() {
+                destCount = AppDatabase.getAppDatabase(MapActivity.this).destinationDao().getNumberOfRows();
+            }
+        }.start();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new Thread() {
+            public void run() {
+                destCount = AppDatabase.getAppDatabase(MapActivity.this).destinationDao().getNumberOfRows();
+            }
+        }.start();
     }
 
     private void initMap() {
@@ -89,15 +102,14 @@ public class MapActivity extends AppCompatActivity
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                if (destCount == 3) {
-                    Toast.makeText(getApplicationContext(), "Max 10 destinations. Return to main and delete or proceed!", Toast.LENGTH_LONG).show();
+                if (destCount > 9) {
+                    Toast.makeText(getApplicationContext(), "Max 10 destinations: delete to add new", Toast.LENGTH_LONG).show();
                 } else {
                     currentPlace = place;
                     updateMap();
                     Destination newDestination = new Destination(currentPlace.getName().toString(),
                             currentPlace.getLatLng().latitude,
                             currentPlace.getLatLng().longitude);
-                    destCount++;
                     Bundle dest = new Bundle();
                     dest.putSerializable("DEST", newDestination);
                     DialogFragment newDialog = new AddDestinationDialog();
@@ -129,6 +141,7 @@ public class MapActivity extends AppCompatActivity
     }*/
 
     public void addDestinationToDatabase(final Destination destination) {
+        destCount++;
         new Thread() {
             @Override
             public void run() {

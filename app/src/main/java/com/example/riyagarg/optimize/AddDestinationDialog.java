@@ -11,7 +11,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.data.Destination;
@@ -31,14 +30,16 @@ public class AddDestinationDialog extends DialogFragment {
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
+        final Destination newDest = (Destination) getArguments().getSerializable("DEST");
         View input = getActivity().getLayoutInflater().inflate(R.layout.new_destination, null);
+        destName = input.findViewById(R.id.destName);
+        destName.setText(newDest.getLocation());
+
         builder.setView(input);
-        initElements(input);
 
         builder.setPositiveButton("Save destination", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Destination newDest = (Destination) getArguments().getSerializable("DEST");
                 ((MapActivity) getContext()).addDestinationToDatabase(newDest);
             }
         });
@@ -59,7 +60,4 @@ public class AddDestinationDialog extends DialogFragment {
         return dialog;
     }
 
-    private void initElements(View input) {
-        destName = input.findViewById(R.id.destName);
-    }
 }
