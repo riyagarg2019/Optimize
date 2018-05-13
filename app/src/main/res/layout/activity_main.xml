@@ -43,9 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
         android:layout_gravity="bottom|right|end"
-        app:srcCompat="@drawable/arrow"
-        android:backgroundTint="@color/fab"
-        android:tint="@color/fabicon"
+        android:src="@drawable/arrow"
        />
 
 </android.support.design.widget.CoordinatorLayout>
