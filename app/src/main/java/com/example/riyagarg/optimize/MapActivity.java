@@ -58,7 +58,7 @@ public class MapActivity extends AppCompatActivity
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         requestNeededPermission();
-        
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -109,6 +109,7 @@ public class MapActivity extends AppCompatActivity
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                 Toast.makeText(this, "Permission granted, jupeee!", Toast.LENGTH_SHORT).show();
+                //Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
                 startLocationMonitoring();
             } else {
@@ -259,8 +260,8 @@ public class MapActivity extends AppCompatActivity
             Log.i("sb", sb.toString());
 
 
-            googleMap.animateCamera(CameraUpdateFactory.newLatLng(
-                    new LatLng(location.getLatitude(), location.getLongitude())
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(location.getLatitude(), location.getLongitude()), 12.0f
             ));
         }
     }
