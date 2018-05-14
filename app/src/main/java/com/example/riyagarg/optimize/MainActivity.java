@@ -14,17 +14,27 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.adapter.DestinationRecyclerAdapter;
 import com.data.AppDatabase;
 import com.data.Destination;
+import com.data.directions.DirectionResult;
+import com.network.DirectionsAPI;
 import com.touch.DestinationTouchHelperCallback;
 
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class MainActivity extends AppCompatActivity {
 
     public static final String KEY_FIRST = "KEY_FIRST";
+    private final String URL_BASE = "https://maps.googleapis.com";
     private DestinationRecyclerAdapter destinationRecyclerAdapter;
 
     @Override
@@ -41,12 +51,36 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                queryDirections();
 
                 Intent intent = new Intent(MainActivity.this, ResultsActivity.class);
                 startActivity(intent);
             }
         });
+    }
+
+    private void queryDirections() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(URL_BASE)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+         DirectionsAPI directionsAPI = retrofit.create(DirectionsAPI.class);
+
+         directionsAPI.getWeatherData("47.562233,19.054486", "47.512875,19.057112", getString(R.string.api_key))
+                 .enqueue(new Callback<DirectionResult>() {
+                     @Override
+                     public void onResponse(Call<DirectionResult> call, Response<DirectionResult> response) {
+                         Toast.makeText(MainActivity.this, response.body().getStatus() + " " +
+                                 response.body().getRoutes().get(0).getLegs().get(0).getDuration().getValue(), Toast.LENGTH_LONG).show();
+                     }
+
+                     @Override
+                     public void onFailure(Call<DirectionResult> call, Throwable t) {
+
+                     }
+                 });
+
     }
 
     private void setRecyclerView() {
