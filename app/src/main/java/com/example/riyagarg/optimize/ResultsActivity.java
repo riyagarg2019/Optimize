@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -31,8 +32,11 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
         OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private List<Destination> destinationList = null;
-    private List<Marker> markerList;
+    private List<Destination> destinationList;
+    private List<Marker> markerList = new LinkedList<>();
+    private List<LatLng> positionList = new LinkedList<>();
+    private PolylineOptions polyLineOpts;
+    private LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +47,9 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(ResultsActivity.this);
+        //destinationList = getIntent().getStringArrayExtra(MainActivity.DESTINATION_LIST);
+        destinationList = (List<Destination>) getIntent().getSerializableExtra("LIST");
+
 
 
         //mMap = ((MapFragment) getFragmentManager().
@@ -80,93 +87,33 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
 
 
         //destinationList = destinationRecyclerAdapter.getDestinationList(); //not a real line
-        Destination eger = new Destination("Eger", 47.9, 20.37);
+        /*Destination eger = new Destination("Eger", 47.9, 20.37);
         Destination budapest = new Destination("Budapest", 47.5, 19.04);
-        Destination bratislava = new Destination("Bratislava", 48.15, 17.11);
+        Destination bratislava = new Destination("Bratislava", 48.15, 17.11);*/
 
-        //destinationList.add(0, eger);
-        //destinationList.add(1, budapest);
 
-        //destinationList.add(new Destination("Eger", 47.9, 20.37));
-        //destinationList.add(new Destination("Budapest", 47.5, 19.04));
-
-        /*for(int i = 0; i < destinationList.size(); i++){
+        for(int i = 0; i < destinationList.size(); i++){
             LatLng position = new LatLng(destinationList.get(i).getLat(), destinationList.get(i).getLng());
+            positionList.add(position);
             Marker myMarker = mMap.addMarker(new MarkerOptions().position(position).title(destinationList.get(i).getLocation()));
-        }*/
-
-
-        LatLng position = new LatLng(eger.getLat(), eger.getLng());
-        Marker myMarker = mMap.addMarker(new MarkerOptions().position(position).title(eger.getLocation()));
-
-        LatLng position2 = new LatLng(budapest.getLat(), budapest.getLng());
-        Marker myMarker2 = mMap.addMarker(new MarkerOptions().position(position2).title(budapest.getLocation()));
-
-        LatLng position3 = new LatLng(bratislava.getLat(), bratislava.getLng());
-        Marker myMarker3 = mMap.addMarker(new MarkerOptions().position(position3).title(bratislava.getLocation()));
-
-
-
-        PolylineOptions polyLineOpts = new PolylineOptions().add(position, position2, position3, position); //draw lines based on optimized positions
-        Polyline polyline = mMap.addPolyline(polyLineOpts);
-        polyline.setColor(Color.GREEN);
-
-
-
-        /*GeoApiContext context = new GeoApiContext.Builder()
-                .apiKey("YOUR_API_KEY")
-                .build();
-        DirectionsApiRequest req = DirectionsApi.getDirections(context, "41.385064,2.173403", "40.416775,-3.70379");
-        try {
-            DirectionsResult res = req.await();
-
-            //Loop through legs and steps to get encoded polylines of each step
-            if (res.routes != null && res.routes.length > 0) {
-                DirectionsRoute route = res.routes[0];
-
-                if (route.legs !=null) {
-                    for(int i=0; i<route.legs.length; i++) {
-                        DirectionsLeg leg = route.legs[i];
-                        if (leg.steps != null) {
-                            for (int j=0; j<leg.steps.length;j++){
-                                DirectionsStep step = leg.steps[j];
-                                if (step.steps != null && step.steps.length >0) {
-                                    for (int k=0; k<step.steps.length;k++){
-                                        DirectionsStep step1 = step.steps[k];
-                                        EncodedPolyline points1 = step1.polyline;
-                                        if (points1 != null) {
-                                            //Decode polyline and add points to list of route coordinates
-                                            List<com.google.maps.model.LatLng> coords1 = points1.decodePath();
-                                            for (com.google.maps.model.LatLng coord1 : coords1) {
-                                                path.add(new LatLng(coord1.lat, coord1.lng));
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    EncodedPolyline points = step.polyline;
-                                    if (points != null) {
-                                        //Decode polyline and add points to list of route coordinates
-                                        List<com.google.maps.model.LatLng> coords = points.decodePath();
-                                        for (com.google.maps.model.LatLng coord : coords) {
-                                            path.add(new LatLng(coord.lat, coord.lng));
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } catch(Exception ex) {
-            Log.e(TAG, ex.getLocalizedMessage());
+            markerList.add(myMarker);
         }
 
-        //Draw the polyline
-        if (path.size() > 0) {
-            PolylineOptions opts = new PolylineOptions().addAll(path).color(Color.BLUE).width(5);
-            mMap.addPolyline(opts);
-        }*/
+        for (int i = 0; i < destinationList.size(); i++){
+            if (i != destinationList.size()-1) {
+                polyLineOpts = new PolylineOptions().add(positionList.get(i), positionList.get(i + 1)); ////draw lines based on optimized positions
+            } else {
+                polyLineOpts = new PolylineOptions().add(positionList.get(destinationList.size()-1), positionList.get(0));
+            }
+            Polyline polyline = mMap.addPolyline(polyLineOpts);
+            polyline.setColor(Color.GREEN);
+            builder.include(positionList.get(i));
+         }
 
+        LatLngBounds bounds = builder.build();
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
+
+        mMap.setTrafficEnabled(true);
 
 
         /*mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -217,15 +164,8 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
 
        // mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
 
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        builder.include(position);
-        builder.include(position2);
-        builder.include(position3);
-        LatLngBounds bounds = builder.build();
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
 
-        mMap.setTrafficEnabled(true);
-        //mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+
 
     }
 }

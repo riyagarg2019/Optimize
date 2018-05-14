@@ -23,6 +23,7 @@ import com.data.directions.DirectionResult;
 import com.network.DirectionsAPI;
 import com.touch.DestinationTouchHelperCallback;
 
+import java.io.Serializable;
 import java.util.List;
 
 import retrofit2.Call;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String KEY_FIRST = "KEY_FIRST";
     private final String URL_BASE = "https://maps.googleapis.com";
     private DestinationRecyclerAdapter destinationRecyclerAdapter;
+    public final String LIST = "LIST";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
                 queryDirections();
 
                 Intent intent = new Intent(MainActivity.this, ResultsActivity.class);
+                intent.putExtra(LIST, (Serializable) destinationRecyclerAdapter.getDestinationList());
                 startActivity(intent);
             }
         });

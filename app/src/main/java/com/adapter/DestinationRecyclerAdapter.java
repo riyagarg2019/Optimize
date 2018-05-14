@@ -23,6 +23,7 @@ public class DestinationRecyclerAdapter extends RecyclerView.Adapter<Destination
         implements DestinationTouchHelperAdapter {
 
     private List<Destination> destinationList;
+    private List<String> stringDestinationList;
     private Context context;
 
     public DestinationRecyclerAdapter(List<Destination> dests, Context context){
@@ -36,6 +37,10 @@ public class DestinationRecyclerAdapter extends RecyclerView.Adapter<Destination
     }
 
     public List<Destination> getDestinationList() {
+        /*for(int i = 0; i < destinationList.size(); i++){
+            stringDestinationList.add((destinationList.get(i)).toString());
+        }*/
+
         return destinationList;
     }
 
