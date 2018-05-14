@@ -23,7 +23,7 @@ import com.data.Destination;
 public class AddDestinationDialog extends DialogFragment {
 
     private TextView destName;
-
+    private TextView destAddr;
 
     @NonNull
     @Override
@@ -31,8 +31,11 @@ public class AddDestinationDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         final Destination newDest = (Destination) getArguments().getSerializable("DEST");
+        String addr = getArguments().getString("ADDR");
         View input = getActivity().getLayoutInflater().inflate(R.layout.new_destination, null);
         destName = input.findViewById(R.id.destName);
+        destAddr = input.findViewById(R.id.destAddr);
+        destAddr.setText(addr);
         destName.setText(newDest.getLocation());
 
         builder.setView(input);

@@ -153,6 +153,7 @@ public class MapActivity extends AppCompatActivity
                             currentPlace.getLatLng().longitude);
                     Bundle dest = new Bundle();
                     dest.putSerializable("DEST", newDestination);
+                    dest.putString("ADDR", place.getAddress().toString());
                     DialogFragment newDialog = new AddDestinationDialog();
                     newDialog.setArguments(dest);
                     newDialog.show(getSupportFragmentManager(), "Add Destination");
