@@ -268,6 +268,7 @@ public class MapActivity extends AppCompatActivity
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                         new LatLng(location.getLatitude(), location.getLongitude()), 12.0f
                 ));
+                googleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Your location"));
             } else {
                 initLocationInMapCallback = true;
             }
