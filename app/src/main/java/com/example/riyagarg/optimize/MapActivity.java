@@ -50,6 +50,8 @@ public class MapActivity extends AppCompatActivity
     private Place currentPlace;
     private int destCount;
     private LocationManager locationManager;
+    private Location currentLocation;
+    private boolean initLocationInMapCallback = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -233,6 +235,12 @@ public class MapActivity extends AppCompatActivity
     public void onMapReady(final GoogleMap googleMap) {
         this.googleMap = googleMap;
 
+        if(initLocationInMapCallback) {
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 12.0f
+            ));
+        }
+
         //googleMap.addMarker(new MarkerOptions().position(currentLatLng).title("current"));
         //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 7.0f));
     }
@@ -253,16 +261,16 @@ public class MapActivity extends AppCompatActivity
     @Override
     public void onLocationChanged(Location location) {
         if (location != null) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("Lat: " + location.getLatitude() + "\n");
-            sb.append("Lng: " + location.getLongitude() + "\n");
+            currentLocation = location;
+            Log.d("DEBUG", "onLocationChanged: " + location.getLatitude() + location.getLongitude());
 
-            Log.i("sb", sb.toString());
-
-
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(location.getLatitude(), location.getLongitude()), 12.0f
-            ));
+            if(googleMap != null) {
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(location.getLatitude(), location.getLongitude()), 12.0f
+                ));
+            } else {
+                initLocationInMapCallback = true;
+            }
         }
     }
 
