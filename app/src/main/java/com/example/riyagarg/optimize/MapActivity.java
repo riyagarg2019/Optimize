@@ -52,6 +52,7 @@ public class MapActivity extends AppCompatActivity
     private int destCount;
     private LocationManager locationManager;
     private Location currentLocation;
+    private Destination currentDestination;
     private boolean initLocationInMapCallback = false;
 
     @Override
@@ -264,6 +265,14 @@ public class MapActivity extends AppCompatActivity
     public void onLocationChanged(Location location) {
         if (location != null) {
             currentLocation = location;
+
+            currentDestination.setLocation("Current location");
+            currentDestination.setLng(currentLocation.getLongitude());
+            currentDestination.setLat(currentLocation.getLatitude());
+            Intent mIntent = new Intent(this, MainActivity.class);
+            Bundle extras = mIntent.getExtras();
+            extras.putSerializable("CURRENT_LOC", currentDestination);
+
             Log.d("DEBUG", "onLocationChanged: " + location.getLatitude() + location.getLongitude());
 
             if(googleMap != null) {

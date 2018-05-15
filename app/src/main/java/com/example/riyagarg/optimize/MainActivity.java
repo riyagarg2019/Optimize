@@ -28,6 +28,7 @@ import com.touch.DestinationTouchHelperCallback;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
     private Retrofit retrofit;
     private DirectionsAPI directionsAPI;
     private int remainingDirectionsAPICalls;
+    private List<Destination> optPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -244,6 +246,46 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
         }.start();
     }
 
+    public void shortestPath() {
+
+        List<Destination> visited = new LinkedList<>();
+        List<DistanceToDestination> unexplored = new LinkedList<>();
+
+        float maxSum = 0;
+        for (Destination src : destAdjList.keySet()) {
+            //print statements for testing
+            Log.i("source", src.getLocation());
+
+            float sum = 0;
+            visited.add(src);
+            List<DistanceToDestination> dests = destAdjList.get(src);
+            //print statements for testing
+
+            for (DistanceToDestination d : dests) {
+                if (!visited.contains(d.getStop())) {
+                    unexplored.add(d);
+                    Log.i("destinations: ", d.getStop().getLocation());
+                }
+            }
+            Log.i("------------------", "--------");
+            while (unexplored.size() > 0) {
+                DistanceToDestination nextDest = unexplored.get(0);
+                Log.i("next chosen dest", nextDest.getStop().getLocation());
+                Log.i("next chosen distance", String.valueOf(nextDest.getDistance()));
+                sum += nextDest.getDistance();
+                visited.add(nextDest.getStop());
+                unexplored.remove(nextDest);
+            }
+            if (sum > maxSum) {
+                maxSum = sum;
+                optPath = visited;
+            }
+        }
+        Log.i("max sum", String.valueOf(maxSum));
+        for (Destination d : optPath) {
+            Log.i("best path", d.getLocation());
+        }
+    }
     /*@Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
