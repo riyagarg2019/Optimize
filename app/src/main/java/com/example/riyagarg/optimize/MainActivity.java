@@ -326,7 +326,6 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
         StringBuilder sb = new StringBuilder("");
 
         //Call recursive utility
-        visited.add(s);
         printAllPaths(s, d, visited, pathList, sb);
 
         Log.w("local paths", "printAllPaths: " + sb.toString());
@@ -334,8 +333,7 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
 
     private void printAllPaths(Destination u, Destination d, List<Destination> visited,
                                    List<Destination> localPath, StringBuilder path) {
-
-
+        visited.add(u);
 
         if (u.equals(d))
         {
