@@ -281,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.w("optSum", String.valueOf(optSum));
 
         Intent intent = new Intent(MainActivity.this, ResultsActivity.class);
-        intent.putExtra(LIST, (Serializable) destinationRecyclerAdapter.getDestinationList());
+        intent.putExtra(LIST, (Serializable) optPath);
         startActivity(intent);
     }
 

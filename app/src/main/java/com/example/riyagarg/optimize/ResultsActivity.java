@@ -8,6 +8,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.adapter.DestinationRecyclerAdapter;
 import com.data.Destination;
@@ -42,8 +43,9 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
-
         destinationList = (List<Destination>) getIntent().getSerializableExtra("LIST");
+
+        Log.d("Results", "onCreate: " + destinationList);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -111,8 +113,11 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
             builder.include(positionList.get(i));
          }
 
-        LatLngBounds bounds = builder.build();
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
+        //LatLngBounds bounds = builder.build();
+        //bounds
+        //Map.animateCamera(CameraUpdateFactory.newLatLngBounds(new LatLngBounds(positionList.get(0),
+                //positionList.get(positionList.size()-1)), 20));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(positionList.get(0), 7.0f));
 
         mMap.setTrafficEnabled(true);
 
