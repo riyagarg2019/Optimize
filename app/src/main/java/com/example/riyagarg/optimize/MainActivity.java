@@ -93,7 +93,9 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
         for (int i = 0; i < destinationList.size(); i++) {
             destAdjList.put(destinationList.get(i), new ArrayList<DistanceToDestination>());
             for (int j = 0; j < destinationList.size(); j++) {
-                queryRetrofit(destinationList.get(i), destinationList.get(j));
+                if(i != j) {
+                    queryRetrofit(destinationList.get(i), destinationList.get(j));
+                }
             }
         }
     }
@@ -129,7 +131,8 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
                         }
 
                         if(remainingDirectionsAPICalls == 0) {
-                            //Do the calculations.
+                            Log.d(TAG, "onResponse: " + destAdjList.toString());
+
                         }
                     }
 
