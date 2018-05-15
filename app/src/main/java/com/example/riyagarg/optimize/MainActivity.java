@@ -289,6 +289,49 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
             Log.i("best path", d.getLocation());
         }
     }
+
+    public void printAllPossiblePaths() {
+        for (Destination s: destAdjList.keySet()) {
+            for (DistanceToDestination d: destAdjList.get(s)) {
+                printAllPaths(s,d.getStop());
+            }
+        }
+    }
+
+    public void printAllPaths(Destination s, Destination d)
+    {
+        List<Destination> visited = new LinkedList<>();
+        List<Destination> pathList = new LinkedList<>();
+
+        //add source to path[]
+        pathList.add(s);
+
+        //Call recursive utility
+        printAllPaths(s, d, visited, pathList);
+    }
+
+    private void printAllPaths(Destination u, Destination d, List<Destination> visited,
+                                   List<Destination> localPath) {
+        visited.add(u);
+
+        if (u.equals(d))
+        {
+            Log.i("local path", localPath.toString());
+        }
+
+        for (DistanceToDestination dest : destAdjList.get(u))
+        {
+            if (!visited.contains(dest)) {
+                localPath.add(dest.getStop());
+                printAllPaths(dest.getStop(), d, visited, localPath);
+
+                localPath.remove(dest.getStop());
+            }
+        }
+
+        // Mark the current node
+        visited.remove(u);
+    }
     /*@Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
