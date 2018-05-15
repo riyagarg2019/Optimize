@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
 
     private void buildDestAdjList() {
         List<Destination> destinationList = destinationRecyclerAdapter.getDestinationList();
-        remainingDirectionsAPICalls = (int) Math.round(Math.pow(destinationList.size(),2));
+        remainingDirectionsAPICalls = destinationList.size() * (destinationList.size() - 1);
 
         for (int i = 0; i < destinationList.size(); i++) {
             destAdjList.put(destinationList.get(i), new ArrayList<DistanceToDestination>());
@@ -127,13 +127,17 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
                         if(response.body().getRoutes().size() > 0) {
 
                             int distanceMetric = response.body().getRoutes().get(0).getLegs().get(0).getDistance().getDistanceValue();
-                            Log.d(TAG, "onResponse: Distance from " + source + " to " + stop + ": " + distanceMetric);
+//                            Log.d(TAG, "onResponse: Distance from " + source + " to " + stop + ": " + distanceMetric);
                             destAdjList.get(source).add(new DistanceToDestination(stop, distanceMetric));
                             remainingDirectionsAPICalls--;
+                        } else {
+//                            Log.d(TAG, "onResponse: FAILURE " + source + "\n " + stop);
                         }
 
+//                        Log.d(TAG, "onResponse: remaining calls" + remainingDirectionsAPICalls);
+
                         if(remainingDirectionsAPICalls == 0) {
-                            Log.d(TAG, "onResponse: " + destAdjList.toString());
+//                            Log.d(TAG, "onResponse: " + destAdjList.toString());
                             shortestPath();
                         }
                     }
