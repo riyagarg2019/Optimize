@@ -138,7 +138,9 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
 
                         if(remainingDirectionsAPICalls == 0) {
 //                            Log.d(TAG, "onResponse: " + destAdjList.toString());
-                            shortestPath();
+
+                            printAdjList();
+                            printAllPossiblePaths();
                         }
                     }
 
@@ -148,6 +150,18 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
                         Log.d(TAG, "onFailure: " + t.getMessage());
                     }
                 });
+    }
+
+    private void printAdjList() {
+        String print = "";
+        for (Destination d: destAdjList.keySet()) {
+            print += d.getLocation() + "{ ";
+            for (DistanceToDestination u: destAdjList.get(d)) {
+                print += u.getStop().getLocation() + ", ";
+            }
+            print += "}\n";
+        }
+        Log.d("PRINT ADJ", "printAdjList: " + print);
     }
 
     private void setRecyclerView() {
@@ -309,25 +323,31 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
 
         //add source to path[]
         pathList.add(s);
+        StringBuilder sb = new StringBuilder("");
 
         //Call recursive utility
-        printAllPaths(s, d, visited, pathList);
+        visited.add(s);
+        printAllPaths(s, d, visited, pathList, sb);
+
+        Log.w("local paths", "printAllPaths: " + sb.toString());
     }
 
     private void printAllPaths(Destination u, Destination d, List<Destination> visited,
-                                   List<Destination> localPath) {
-        visited.add(u);
+                                   List<Destination> localPath, StringBuilder path) {
+
+
 
         if (u.equals(d))
         {
-            Log.i("local path", localPath.toString());
+            path.append(localPath.toString());
+            path.append("\n");
         }
 
         for (DistanceToDestination dest : destAdjList.get(u))
         {
-            if (!visited.contains(dest)) {
+            if (!visited.contains(dest.getStop())) {
                 localPath.add(dest.getStop());
-                printAllPaths(dest.getStop(), d, visited, localPath);
+                printAllPaths(dest.getStop(), d, visited, localPath, path);
 
                 localPath.remove(dest.getStop());
             }
