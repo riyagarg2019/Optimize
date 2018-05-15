@@ -43,12 +43,13 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
 
+        destinationList = (List<Destination>) getIntent().getSerializableExtra("LIST");
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(ResultsActivity.this);
         //destinationList = getIntent().getStringArrayExtra(MainActivity.DESTINATION_LIST);
-        destinationList = (List<Destination>) getIntent().getSerializableExtra("LIST");
 
 
 

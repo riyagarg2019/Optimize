@@ -81,10 +81,6 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
             @Override
             public void onClick(View v) {
                 buildDestAdjList();
-
-                Intent intent = new Intent(MainActivity.this, ResultsActivity.class);
-                intent.putExtra(LIST, (Serializable) destinationRecyclerAdapter.getDestinationList());
-                startActivity(intent);
             }
         });
     }
@@ -128,18 +124,11 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
                         if(response.body().getRoutes().size() > 0) {
 
                             int distanceMetric = response.body().getRoutes().get(0).getLegs().get(0).getDuration().getValue();
-//                            Log.d(TAG, "onResponse: Distance from " + source + " to " + stop + ": " + distanceMetric);
                             destAdjList.get(source).add(new DistanceToDestination(stop, distanceMetric));
                             remainingDirectionsAPICalls--;
-                        } else {
-//                            Log.d(TAG, "onResponse: FAILURE " + source + "\n " + stop);
                         }
 
-//                        Log.d(TAG, "onResponse: remaining calls" + remainingDirectionsAPICalls);
-
                         if(remainingDirectionsAPICalls == 0) {
-//                            Log.d(TAG, "onResponse: " + destAdjList.toString());
-
                             printAdjList();
                             /*
                             for (Destination d: destAdjList.keySet()) {
@@ -150,7 +139,7 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
                                 }
                                 Log.i("---------------", "----------------");
                             } */
-                            printAllPossiblePaths();
+                            optimizeFromAllPossiblePaths();
                             Log.w("opt path", optPath.toString());
                         }
                     }
@@ -278,17 +267,21 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
         }.start();
     }
 
-    public void printAllPossiblePaths() {
+    public void optimizeFromAllPossiblePaths() {
         optSum = Float.MAX_VALUE;
         for (Destination s: destAdjList.keySet()) {
             for (DistanceToDestination d: destAdjList.get(s)) {
-                printAllPaths(s,d.getStop());
+                optimizeSinglePathSetup(s,d.getStop());
             }
         }
         Log.w("optSum", String.valueOf(optSum));
+
+        Intent intent = new Intent(MainActivity.this, ResultsActivity.class);
+        intent.putExtra(LIST, (Serializable) destinationRecyclerAdapter.getDestinationList());
+        startActivity(intent);
     }
 
-    public void printAllPaths(Destination s, Destination d)
+    public void optimizeSinglePathSetup(Destination s, Destination d)
     {
         List<Destination> visited = new LinkedList<>();
         List<Destination> pathList = new LinkedList<>();
@@ -299,13 +292,13 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
         StringBuilder sb = new StringBuilder("");
 
         //Call recursive utility
-        printAllPaths(s, d, visited, pathList, sb, sum);
+        optimizeSinglePath(s, d, visited, pathList, sb, sum);
 
-        Log.w("local paths", "printAllPaths: " + sb.toString());
+        Log.w("local paths", "optimizeSinglePath: " + sb.toString());
     }
 
-    private void printAllPaths(Destination u, Destination d, List<Destination> visited,
-                                   List<Destination> localPath, StringBuilder path, float sum) {
+    private void optimizeSinglePath(Destination u, Destination d, List<Destination> visited,
+                                    List<Destination> localPath, StringBuilder path, float sum) {
         visited.add(u);
 
         if (u.getLocation().equals(d.getLocation()) && localPath.size() == destAdjList.keySet().size())
@@ -326,7 +319,7 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
                 localPath.add(dest.getStop());
                 sum += dest.getDistance();
 
-                printAllPaths(dest.getStop(), d, visited, localPath, path, sum);
+                optimizeSinglePath(dest.getStop(), d, visited, localPath, path, sum);
 
                 localPath.remove(dest.getStop());
                 sum = sum - dest.getDistance();
