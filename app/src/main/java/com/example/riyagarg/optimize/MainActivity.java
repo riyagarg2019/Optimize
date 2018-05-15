@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
 
                         if(remainingDirectionsAPICalls == 0) {
                             Log.d(TAG, "onResponse: " + destAdjList.toString());
-
+                            shortestPath();
                         }
                     }
 
