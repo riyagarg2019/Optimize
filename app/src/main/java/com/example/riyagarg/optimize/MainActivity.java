@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
     private int remainingDirectionsAPICalls;
     private List<Destination> optPath;
     private float optSum;
-    List<List<Destination>> paths = new LinkedList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,6 +141,7 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
 //                            Log.d(TAG, "onResponse: " + destAdjList.toString());
 
                             printAdjList();
+                            /*
                             for (Destination d: destAdjList.keySet()) {
                                 Log.i("destination", d.getLocation());
                                 for (DistanceToDestination s : destAdjList.get(d)) {
@@ -149,8 +149,9 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
                                     Log.i("cost", String.valueOf(s.getDistance()));
                                 }
                                 Log.i("---------------", "----------------");
-                            }
+                            } */
                             printAllPossiblePaths();
+                            Log.w("opt path", optPath.toString());
                         }
                     }
 
@@ -284,6 +285,7 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
                 printAllPaths(s,d.getStop());
             }
         }
+        Log.w("optSum", String.valueOf(optSum));
     }
 
     public void printAllPaths(Destination s, Destination d)
@@ -299,7 +301,7 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
         //Call recursive utility
         printAllPaths(s, d, visited, pathList, sb, sum);
 
-        //Log.w("local paths", "printAllPaths: " + sb.toString());
+        Log.w("local paths", "printAllPaths: " + sb.toString());
     }
 
     private void printAllPaths(Destination u, Destination d, List<Destination> visited,
@@ -308,27 +310,26 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
 
         if (u.getLocation().equals(d.getLocation()) && localPath.size() == destAdjList.keySet().size())
         {
-            paths.add(localPath);
             path.append(localPath.toString());
             path.append(sum);
             path.append("\n");
-            /*
             if (sum < optSum) {
                 optSum = sum;
-                optPath = localPath;
+                optPath = new LinkedList<>(localPath);
             }
-            sum = 0; */
+            sum = 0;
         }
 
         for (DistanceToDestination dest : destAdjList.get(u))
         {
             if (!visited.contains(dest.getStop())) {
                 localPath.add(dest.getStop());
-                //sum += dest.getDistance();
+                sum += dest.getDistance();
 
                 printAllPaths(dest.getStop(), d, visited, localPath, path, sum);
 
                 localPath.remove(dest.getStop());
+                sum = sum - dest.getDistance();
             }
         }
 
