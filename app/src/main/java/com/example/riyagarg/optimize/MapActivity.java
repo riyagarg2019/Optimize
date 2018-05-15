@@ -81,9 +81,6 @@ public class MapActivity extends AppCompatActivity
             public void onClick(View v) {
                 Intent intent = new Intent(MapActivity.this, MainActivity.class);
 
-                currentDestination = new Destination("Current location",
-                        currentLocation.getLongitude(),
-                        currentLocation.getLongitude());
                 Bundle extras = intent.getExtras();
                 extras.putSerializable("CURRENT_LOC", currentDestination);
                 startActivity(intent);
@@ -271,6 +268,9 @@ public class MapActivity extends AppCompatActivity
     public void onLocationChanged(Location location) {
         if (location != null) {
             currentLocation = location;
+            currentDestination = new Destination("Current location",
+                    location.getLongitude(),
+                    location.getLongitude());
 
             Log.d("DEBUG", "onLocationChanged: " + location.getLatitude() + location.getLongitude());
 
