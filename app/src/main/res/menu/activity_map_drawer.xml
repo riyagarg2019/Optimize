@@ -7,4 +7,8 @@
         android:id="@+id/nav_to_main_activity"
         android:icon="@drawable/place"
         android:title="My Destinations" />
+    <item
+        android:id="@+id/nav_to_add_destination"
+        android:title="Add New Destination"
+        />
 </menu>
