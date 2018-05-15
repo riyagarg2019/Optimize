@@ -4,15 +4,20 @@
     android:layout_height="wrap_content"
     android:padding="5dp"
     android:layout_marginTop="5dp"
-    android:layout_marginBottom="5dp">
+    android:layout_marginBottom="5dp"
+    android:background="@color/fab">
 
     <TextView
         android:id="@+id/tvLocation"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_gravity="center_horizontal" />
     <TextView
         android:id="@+id/tvDescription"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
 
 </LinearLayout>

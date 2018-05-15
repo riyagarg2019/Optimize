@@ -21,7 +21,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Optimized Order:"
+        android:paddingLeft="7dp"
         android:textSize="20dp"/>
 
+
+    <include layout="@layout/content_main" />
 
 </LinearLayout>
