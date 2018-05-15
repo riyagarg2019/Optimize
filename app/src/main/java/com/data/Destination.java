@@ -56,4 +56,14 @@ public class Destination implements Serializable {
     public void setLng(Double lng) {
         this.lng = lng;
     }
+
+    @Override
+    public String toString() {
+        return "Destination{" +
+                "destinationId=" + destinationId +
+                ", location='" + location + '\'' +
+                ", lat=" + lat +
+                ", lng=" + lng +
+                '}';
+    }
 }

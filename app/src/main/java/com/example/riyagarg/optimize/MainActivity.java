@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,12 +41,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity { //implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String KEY_FIRST = "KEY_FIRST";
+    public static final String TAG = "DEBUG";
     private final String URL_BASE = "https://maps.googleapis.com";
     private DestinationRecyclerAdapter destinationRecyclerAdapter;
     public final String LIST = "LIST";
     private Map<Destination, List<DistanceToDestination>> destAdjList;
     private Retrofit retrofit;
     private DirectionsAPI directionsAPI;
+    private int remainingDirectionsAPICalls;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +72,7 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);*/
 
+        initRetrofit();
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,8 +87,8 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
     }
 
     private void buildDestAdjList() {
-        initRetrofit();
         List<Destination> destinationList = destinationRecyclerAdapter.getDestinationList();
+        remainingDirectionsAPICalls = (int) Math.round(Math.pow(destinationList.size(),2));
 
         for (int i = 0; i < destinationList.size(); i++) {
             destAdjList.put(destinationList.get(i), new ArrayList<DistanceToDestination>());
@@ -115,12 +119,24 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
                 .enqueue(new Callback<DirectionResult>() {
                     @Override
                     public void onResponse(Call<DirectionResult> call, Response<DirectionResult> response) {
-                        destAdjList.get(source).add(new DistanceToDestination(stop, ));
+
+                        if(response.body().getRoutes().size() > 0) {
+
+                            int distanceMetric = response.body().getRoutes().get(0).getLegs().get(0).getDistance().getDistanceValue();
+                            Log.d(TAG, "onResponse: Distance from " + source + " to " + stop + ": " + distanceMetric);
+                            destAdjList.get(source).add(new DistanceToDestination(stop, distanceMetric));
+                            remainingDirectionsAPICalls--;
+                        }
+
+                        if(remainingDirectionsAPICalls == 0) {
+                            //Do the calculations.
+                        }
                     }
 
                     @Override
                     public void onFailure(Call<DirectionResult> call, Throwable t) {
-
+                        Toast.makeText(MainActivity.this, "Something went wrong. Check the logs", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "onFailure: " + t.getMessage());
                     }
                 });
     }

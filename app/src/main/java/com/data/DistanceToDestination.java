@@ -26,4 +26,12 @@ public class DistanceToDestination {
     public void setDistance(float distance) {
         this.distance = distance;
     }
+
+    @Override
+    public String toString() {
+        return "DistanceToDestination{" +
+                "stop=" + stop +
+                ", distance=" + distance +
+                '}';
+    }
 }

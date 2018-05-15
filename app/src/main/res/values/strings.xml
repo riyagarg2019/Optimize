@@ -6,4 +6,6 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="api_key">AIzaSyAm3bRUh5RWzUHGbTRcQtcMsxvBQ_E1aMw</string>
+    <string name="no_route_between_locations_error">Unfortunately, there is no route between %1 and %2. Please delete
+    one of the locations and try again.</string>
 </resources>
