@@ -53,6 +53,7 @@ public class MapActivity extends AppCompatActivity
     private LocationManager locationManager;
     private Location currentLocation;
     private Destination currentDestination;
+    private boolean isCurrentDestSet = false;
     private boolean initLocationInMapCallback = false;
 
     @Override
@@ -274,10 +275,11 @@ public class MapActivity extends AppCompatActivity
 
             Log.d("DEBUG", "onLocationChanged: " + location.getLatitude() + location.getLongitude());
 
-            if(googleMap != null) {
+            if(googleMap != null && !isCurrentDestSet) {
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                         new LatLng(location.getLatitude(), location.getLongitude()), 12.0f
                 ));
+                isCurrentDestSet = true;
                 googleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Your location"));
             } else {
                 initLocationInMapCallback = true;
