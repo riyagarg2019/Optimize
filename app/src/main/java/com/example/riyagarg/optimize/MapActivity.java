@@ -80,6 +80,12 @@ public class MapActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MapActivity.this, MainActivity.class);
+
+                currentDestination = new Destination("Current location",
+                        currentLocation.getLongitude(),
+                        currentLocation.getLongitude());
+                Bundle extras = intent.getExtras();
+                extras.putSerializable("CURRENT_LOC", currentDestination);
                 startActivity(intent);
             }
         });
@@ -265,13 +271,6 @@ public class MapActivity extends AppCompatActivity
     public void onLocationChanged(Location location) {
         if (location != null) {
             currentLocation = location;
-
-            currentDestination.setLocation("Current location");
-            currentDestination.setLng(currentLocation.getLongitude());
-            currentDestination.setLat(currentLocation.getLatitude());
-            Intent mIntent = new Intent(this, MainActivity.class);
-            Bundle extras = mIntent.getExtras();
-            extras.putSerializable("CURRENT_LOC", currentDestination);
 
             Log.d("DEBUG", "onLocationChanged: " + location.getLatitude() + location.getLongitude());
 
