@@ -6,9 +6,6 @@
     android:layout_height="match_parent"
     tools:context="com.example.riyagarg.optimize.MainActivity">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"></FrameLayout>
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
@@ -45,5 +42,15 @@
         android:layout_gravity="bottom|right|end"
         android:src="@drawable/arrow"
        />
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        android:visibility="gone"
+        app:headerLayout="@layout/nav_header_map"
+        app:menu="@menu/activity_map_drawer" />
 
 </android.support.design.widget.CoordinatorLayout>
