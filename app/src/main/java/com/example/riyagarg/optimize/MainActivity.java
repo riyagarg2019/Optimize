@@ -6,11 +6,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,12 +19,17 @@ import android.widget.Toast;
 import com.adapter.DestinationRecyclerAdapter;
 import com.data.AppDatabase;
 import com.data.Destination;
+import com.data.DistanceToDestination;
 import com.data.directions.DirectionResult;
 import com.network.DirectionsAPI;
 import com.touch.DestinationTouchHelperCallback;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,6 +43,9 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
     private final String URL_BASE = "https://maps.googleapis.com";
     private DestinationRecyclerAdapter destinationRecyclerAdapter;
     public final String LIST = "LIST";
+    private Map<Destination, List<DistanceToDestination>> destAdjList;
+    private Retrofit retrofit;
+    private DirectionsAPI directionsAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +56,8 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
         setSupportActionBar(toolbar);
         setRecyclerView();
         saveThatItWasStarted();
+
+        destAdjList = new HashMap<>();
 
         /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -68,7 +73,7 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                queryDirections();
+                buildDestAdjList();
 
                 Intent intent = new Intent(MainActivity.this, ResultsActivity.class);
                 intent.putExtra(LIST, (Serializable) destinationRecyclerAdapter.getDestinationList());
@@ -77,28 +82,47 @@ public class MainActivity extends AppCompatActivity { //implements NavigationVie
         });
     }
 
-    private void queryDirections() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(URL_BASE)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+    private void buildDestAdjList() {
+        initRetrofit();
+        List<Destination> destinationList = destinationRecyclerAdapter.getDestinationList();
 
-         DirectionsAPI directionsAPI = retrofit.create(DirectionsAPI.class);
+        for (int i = 0; i < destinationList.size(); i++) {
+            destAdjList.put(destinationList.get(i), new ArrayList<DistanceToDestination>());
+            for (int j = 0; j < destinationList.size(); j++) {
+                queryRetrofit(destinationList.get(i), destinationList.get(j));
+            }
+        }
+    }
 
-         directionsAPI.getWeatherData("47.562233,19.054486", "47.512875,19.057112", getString(R.string.api_key))
-                 .enqueue(new Callback<DirectionResult>() {
-                     @Override
-                     public void onResponse(Call<DirectionResult> call, Response<DirectionResult> response) {
-                         Toast.makeText(MainActivity.this, response.body().getStatus() + " " +
-                                 response.body().getRoutes().get(0).getLegs().get(0).getDuration().getValue(), Toast.LENGTH_LONG).show();
-                     }
+    @NonNull
+    private void initRetrofit() {
+        retrofit = new Retrofit.Builder()
+                    .baseUrl(URL_BASE)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
 
-                     @Override
-                     public void onFailure(Call<DirectionResult> call, Throwable t) {
+        directionsAPI = retrofit.create(DirectionsAPI.class);
+    }
 
-                     }
-                 });
 
+
+    private void queryRetrofit(final Destination source, final Destination stop) {
+        String sourceLatLng = String.format(Locale.getDefault(), "%f,%f",source.getLat(),source.getLng());
+        String destLatLng = String.format(Locale.getDefault(), "%f,%f",stop.getLat(),stop.getLng());
+
+
+        directionsAPI.getWeatherData(sourceLatLng, destLatLng, getString(R.string.api_key))
+                .enqueue(new Callback<DirectionResult>() {
+                    @Override
+                    public void onResponse(Call<DirectionResult> call, Response<DirectionResult> response) {
+                        destAdjList.get(source).add(new DistanceToDestination(stop, ));
+                    }
+
+                    @Override
+                    public void onFailure(Call<DirectionResult> call, Throwable t) {
+
+                    }
+                });
     }
 
     private void setRecyclerView() {

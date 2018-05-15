@@ -7,10 +7,10 @@ public class Distance {
 
     @SerializedName("text")
     @Expose
-    private String text;
+    private String timeString;
     @SerializedName("value")
     @Expose
-    private int value;
+    private int distanceValue;
 
     /**
      * No args constructor for use in serialization
@@ -19,28 +19,28 @@ public class Distance {
     }
 
     /**
-     * @param text
-     * @param value
+     * @param timeString
+     * @param distanceValue
      */
-    public Distance(String text, int value) {
+    public Distance(String timeString, int distanceValue) {
         super();
-        this.text = text;
-        this.value = value;
+        this.timeString = timeString;
+        this.distanceValue = distanceValue;
     }
 
-    public String getText() {
-        return text;
+    public String getTimeString() {
+        return timeString;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setTimeString(String timeString) {
+        this.timeString = timeString;
     }
 
-    public int getValue() {
-        return value;
+    public int getDistanceValue() {
+        return distanceValue;
     }
 
-    public void setValue(int value) {
-        this.value = value;
+    public void setDistanceValue(int value) {
+        this.distanceValue = value;
     }
 }
