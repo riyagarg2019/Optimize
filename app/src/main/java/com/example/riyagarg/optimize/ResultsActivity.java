@@ -38,9 +38,8 @@ import java.util.Locale;
 public class ResultsActivity extends AppCompatActivity implements LocationListener,
         OnMapReadyCallback {
 
-    private GoogleMap mMap;
     private List<Destination> destinationList;
-    private List<Marker> markerList = new LinkedList<>();
+    public List<Marker> markerList = new LinkedList<>();
     private List<LatLng> positionList = new LinkedList<>();
     private PolylineOptions polyLineOpts;
     private LatLngBounds.Builder builder = new LatLngBounds.Builder();
@@ -52,6 +51,10 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
         setContentView(R.layout.activity_results);
 
         destinationList = (List<Destination>) getIntent().getSerializableExtra("LIST");
+
+        //MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+
+        //mapFragment.getMapAsync(ResultsActivity.this);
 
 
         setRecyclerView();
@@ -80,10 +83,11 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+        GoogleMap mMap = googleMap;
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(47, 19)));
 
 
-        if(destinationList.size() != 0) {
+
             for (int i = 0; i < destinationList.size(); i++) {
                 LatLng position = new LatLng(destinationList.get(i).getLat(), destinationList.get(i).getLng());
                 positionList.add(position);
@@ -102,11 +106,14 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
                 builder.include(positionList.get(i));
             }
 
-            LatLngBounds bounds = builder.build();
-            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
+            if(positionList.size() != 0) {
+                LatLngBounds bounds = builder.build();
 
-            mMap.setTrafficEnabled(true);
-        }
+                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
+                mMap.setTrafficEnabled(true);
+            }
+
+
 
 
         /*mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
