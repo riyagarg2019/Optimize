@@ -387,6 +387,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         @Override
         protected void onPostExecute(Void aVoid) {
             pcFAB.hide();
+            destAdjList.clear();
             Intent intent = new Intent(MainActivity.this, ResultsActivity.class);
             intent.putExtra(LIST, (Serializable) optPath);
             startActivity(intent);
