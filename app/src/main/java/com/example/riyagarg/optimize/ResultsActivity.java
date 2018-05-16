@@ -117,7 +117,10 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
         LatLngBounds bounds = builder.build();
         int width = getResources().getDisplayMetrics().widthPixels;
         int height = getResources().getDisplayMetrics().heightPixels;
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds,width, height, 20));
+        for(int i = 0; i < positionList.size(); i++){
+            bounds.including(positionList.get(i));
+        }
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20)); //was bounds, width, height, 20
     }
 
     private void setRecyclerView() {
