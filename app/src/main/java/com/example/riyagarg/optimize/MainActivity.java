@@ -164,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void onFailure(Call<DirectionResult> call, Throwable t) {
                         Toast.makeText(MainActivity.this, R.string.unknown_error_retrofit, Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "onFailure: " + t.getMessage());
+                        pcFAB.hide();
                     }
                 });
     }

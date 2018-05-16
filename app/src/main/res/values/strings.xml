@@ -20,4 +20,5 @@
     <string name="permission_granted">Permission granted!</string>
     <string name="permission_not_granted">Permission not granted :(</string>
     <string name="unknown_error_retrofit">Something went wrong. Check the logs</string>
+    <string name="location_error">Unable to obtain your location, make sure location tracking is turned on in the settings.</string>
 </resources>

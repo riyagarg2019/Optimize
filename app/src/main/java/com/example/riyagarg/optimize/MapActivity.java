@@ -132,7 +132,7 @@ public class MapActivity extends AppCompatActivity
     }
 
     private void showLocationError() {
-        Toast.makeText(this, "Unable to obtain your location, make sure location tracking is turned on in the settings.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.location_error, Toast.LENGTH_LONG).show();
     }
 
     private void initNavigationDrawer(Toolbar toolbar) {
