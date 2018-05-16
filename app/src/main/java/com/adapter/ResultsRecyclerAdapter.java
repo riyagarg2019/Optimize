@@ -13,6 +13,7 @@ import com.example.riyagarg.optimize.R;
 import com.touch.DestinationTouchHelperAdapter;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -20,7 +21,7 @@ import java.util.List;
  */
 
 public class ResultsRecyclerAdapter extends RecyclerView.Adapter<com.adapter.DestinationRecyclerAdapter.ViewHolder>
-            implements DestinationTouchHelperAdapter {
+             {
 
     private List<Destination> destinationList;
     private List<String> stringDestinationList;
@@ -56,7 +57,11 @@ public class ResultsRecyclerAdapter extends RecyclerView.Adapter<com.adapter.Des
 
         holder.tvLocation.setText(destinationList.get(holder.getAdapterPosition()).getLocation());
 
+        holder.tvNumber.setText(String.valueOf(position + 1) + ".");
+
     }
+
+
 
     public void addDestination(Destination dest) {
         destinationList.add(dest);
@@ -84,45 +89,16 @@ public class ResultsRecyclerAdapter extends RecyclerView.Adapter<com.adapter.Des
         return destinationList.size();
     }
 
-    @Override
-    public void onDestinationDismiss(int position) {
-        //should remove item at position from list
-        final Destination Remove = destinationList.remove(position);
-
-        notifyItemRemoved(position);
-        new Thread(){
-            @Override
-            public void run() {
-                AppDatabase.getAppDatabase(context).destinationDao().delete(Remove);
-            }
-        }.start();
-
-    }
-
-    @Override
-    public void onDestinationMove(int fromPosition, int toPosition) {
-        if (fromPosition < toPosition) {
-            for (int i = fromPosition; i < toPosition; i++) {
-                Collections.swap(destinationList, i, i + 1);
-            }
-        } else {
-            for (int i = fromPosition; i > toPosition; i--) {
-                Collections.swap(destinationList, i, i - 1);
-            }
-        }
-        notifyItemMoved(fromPosition, toPosition);
-
-    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         private TextView tvLocation;
-        private TextView tvDescription;
+        private TextView tvNumber;
 
 
         public ViewHolder(View itemView){
             super(itemView);
             tvLocation = itemView.findViewById(R.id.tvLocation);
-            tvDescription = itemView.findViewById(R.id.tvDescription);
+            tvNumber = itemView.findViewById(R.id.tvNumber);
 
 
         }

@@ -182,10 +182,6 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
                     public void run() {
                         resultsRecyclerAdapter = new ResultsRecyclerAdapter(dests, ResultsActivity.this);
                         recyclerView.setAdapter(resultsRecyclerAdapter);
-                        ItemTouchHelper.Callback callback =
-                                new DestinationTouchHelperCallback(resultsRecyclerAdapter);
-                        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-                        touchHelper.attachToRecyclerView(recyclerView);
                     }
                 });
             }
