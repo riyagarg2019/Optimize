@@ -14,4 +14,10 @@
     <string name="optimize_route">Optimize route</string>
     <string name="retrofit_error">Unable to find a route from each place to every other place. Please ensure all your destinations are accessible from each other.</string>
     <string name="delete_all">Delete all</string>
+    <string name="save_destination">Save destination</string>
+    <string name="discard_destination">Discard destination</string>
+    <string name="max_ten">Max 10 destinations: delete to add new</string>
+    <string name="permission_granted">Permission granted!</string>
+    <string name="permission_not_granted">Permission not granted :(</string>
+    <string name="unknown_error_retrofit">Something went wrong. Check the logs</string>
 </resources>

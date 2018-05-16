@@ -30,8 +30,8 @@ public class AddDestinationDialog extends DialogFragment {
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        final Destination newDest = (Destination) getArguments().getSerializable("DEST");
-        String addr = getArguments().getString("ADDR");
+        final Destination newDest = (Destination) getArguments().getSerializable(MapActivity.DEST);
+        String addr = getArguments().getString(MapActivity.ADDR);
         View input = getActivity().getLayoutInflater().inflate(R.layout.new_destination, null);
         destName = input.findViewById(R.id.destName);
         destAddr = input.findViewById(R.id.destAddr);
@@ -40,14 +40,14 @@ public class AddDestinationDialog extends DialogFragment {
 
         builder.setView(input);
 
-        builder.setPositiveButton("Save destination", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.save_destination, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 ((MapActivity) getContext()).addDestinationToDatabase(newDest);
             }
         });
 
-        builder.setNegativeButton("Discard destination", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.discard_destination, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

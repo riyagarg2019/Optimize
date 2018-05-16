@@ -47,6 +47,9 @@ import java.util.Map;
 public class MapActivity extends AppCompatActivity
         implements android.location.LocationListener, NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
+    public static final String CURRENT_LOC = "CURRENT_LOC";
+    public static final String DEST = "DEST";
+    public static final String ADDR = "ADDR";
     private GoogleMap googleMap;
     private Place currentPlace;
     private int destCount;
@@ -88,7 +91,7 @@ public class MapActivity extends AppCompatActivity
         Intent intent = new Intent(MapActivity.this, MainActivity.class);
 
         Bundle extras = new Bundle();
-        extras.putSerializable("CURRENT_LOC", currentDestination);
+        extras.putSerializable(CURRENT_LOC, currentDestination);
         intent.putExtras(extras);
         startActivity(intent);
     }
@@ -124,12 +127,12 @@ public class MapActivity extends AppCompatActivity
             if (grantResults.length > 0 &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                Toast.makeText(this, "Permission granted, jupeee!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.permission_granted, Toast.LENGTH_SHORT).show();
                 //Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
                 startLocationMonitoring();
             } else {
-                Toast.makeText(this, "Permission not granted :(", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.permission_not_granted, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -158,7 +161,7 @@ public class MapActivity extends AppCompatActivity
             @Override
             public void onPlaceSelected(Place place) {
                 if (destCount > 9) {
-                    Toast.makeText(getApplicationContext(), "Max 10 destinations: delete to add new", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.max_ten, Toast.LENGTH_LONG).show();
                 } else {
                     currentPlace = place;
                     updateMap();
@@ -166,8 +169,8 @@ public class MapActivity extends AppCompatActivity
                             currentPlace.getLatLng().latitude,
                             currentPlace.getLatLng().longitude);
                     Bundle dest = new Bundle();
-                    dest.putSerializable("DEST", newDestination);
-                    dest.putString("ADDR", place.getAddress().toString());
+                    dest.putSerializable(DEST, newDestination);
+                    dest.putString(ADDR, place.getAddress().toString());
                     DialogFragment newDialog = new AddDestinationDialog();
                     newDialog.setArguments(dest);
                     newDialog.show(getSupportFragmentManager(), "Add Destination");
@@ -176,7 +179,7 @@ public class MapActivity extends AppCompatActivity
 
             @Override
             public void onError(Status status) {
-                // TODO: Handle the error.
+
             }
         });
     }
@@ -209,16 +212,12 @@ public class MapActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.map, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement

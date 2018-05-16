@@ -1,26 +1,17 @@
 package com.example.riyagarg.optimize;
 
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
-import android.util.Log;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.widget.Toast;
-import com.adapter.DestinationRecyclerAdapter;
 import com.adapter.ResultsRecyclerAdapter;
-import com.data.AppDatabase;
 import com.data.Destination;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -29,12 +20,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.touch.DestinationTouchHelperCallback;
 
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 public class ResultsActivity extends AppCompatActivity implements LocationListener,
         OnMapReadyCallback {
@@ -51,14 +40,11 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
-        destinationList = (List<Destination>) getIntent().getSerializableExtra("LIST");
-        Log.d("Results", "onCreate: " + destinationList);
+        destinationList = (List<Destination>) getIntent().getSerializableExtra(MainActivity.LIST);
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(ResultsActivity.this);
-        //destinationList = getIntent().getStringArrayExtra(MainActivity.DESTINATION_LIST);
         setRecyclerView();
 
     }
@@ -107,10 +93,7 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
                 builder.include(positionList.get(i));
             }
 
-            LatLngBounds bounds = builder.build();
-            int width = getResources().getDisplayMetrics().widthPixels;
-            int height = getResources().getDisplayMetrics().heightPixels;
-            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds,width, height, 20));
+            setLatLngBounds();
 
             mMap.setTrafficEnabled(true);
         }
@@ -130,6 +113,13 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
             public void onMarkerDragEnd(Marker marker) {
             }
         });
+    }
+
+    private void setLatLngBounds() {
+        LatLngBounds bounds = builder.build();
+        int width = getResources().getDisplayMetrics().widthPixels;
+        int height = getResources().getDisplayMetrics().heightPixels;
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds,width, height, 20));
     }
 
     private void setRecyclerView() {
