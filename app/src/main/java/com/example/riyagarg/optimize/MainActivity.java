@@ -64,20 +64,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        initNavigationDrawer(toolbar);
+
         setRecyclerView();
         saveThatItWasStarted();
 
         destAdjList = new HashMap<>();
 
-        /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);*/
 
         initRetrofit();
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -87,6 +80,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 buildDestAdjList();
             }
         });
+    }
+
+    private void initNavigationDrawer(Toolbar toolbar) {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
     private void buildDestAdjList() {
@@ -330,16 +334,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
 
-        // Mark the current node
         visited.remove(u);
     }
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.nav_to_main_activity) {
-            Intent intent = new Intent(this, MainActivity.class);
+            item.setVisible(false);
+        } else if(id == R.id.nav_to_add_destination) {
+            Intent intent = new Intent(this, MapActivity.class);
             startActivity(intent);
-            finish();
+        } else if(id == R.id.nav_to_optimize) {
+            //Start async task
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -351,13 +357,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onPointerCaptureChanged(boolean hasCapture) {
 
     }
-/*
-    public void editPlace(Place place) {
 
-        CreateTobuyDialog editDialog = new CreateTobuyDialog();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(KEY_TOBUY_TO_EDIT, tobuy);
-        editDialog.setArguments(bundle);
-        editDialog.show(getSupportFragmentManager(), getString(R.string.edit_dialog));
-    } */
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
 }
