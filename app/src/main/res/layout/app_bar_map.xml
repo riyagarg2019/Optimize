@@ -28,6 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
         android:layout_gravity="bottom|right|end"
-        android:src="@drawable/play" />
+        android:src="@drawable/play"
+        android:tint="@android:color/white"/>
 
 </android.support.design.widget.CoordinatorLayout>

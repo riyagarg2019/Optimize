@@ -1,6 +1,5 @@
 package com.example.riyagarg.optimize;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -53,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static final String TAG = "DEBUG";
     private final String URL_BASE = "https://maps.googleapis.com";
     private DestinationRecyclerAdapter destinationRecyclerAdapter;
-    public final String LIST = "LIST";
+    public static final String LIST = "LIST";
     private Map<Destination, List<DistanceToDestination>> destAdjList;
     private Retrofit retrofit;
     private DirectionsAPI directionsAPI;
@@ -81,14 +80,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         destAdjList = new HashMap<>();
         pcFAB = findViewById(R.id.fabProgressCircle);
-        currentDestination = (Destination) getIntent().getSerializableExtra("CURRENT_LOC");
+        currentDestination = (Destination) getIntent().getSerializableExtra(MapActivity.CURRENT_LOC);
 
         initRetrofit();
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("entered here", "!");
                 pcFAB.show();
                 buildDestAdjList();
             }
@@ -164,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     @Override
                     public void onFailure(Call<DirectionResult> call, Throwable t) {
-                        Toast.makeText(MainActivity.this, "Something went wrong. Check the logs", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, R.string.unknown_error_retrofit, Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "onFailure: " + t.getMessage());
                     }
                 });
@@ -298,7 +296,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         }
-        Log.w("optSum", String.valueOf(optSum));
     }
 
     public void optimizeSinglePathSetup(Destination s, Destination d)
@@ -314,7 +311,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Call recursive utility
         optimizeSinglePath(s, d, visited, pathList, sb, sum);
 
-        Log.w("local paths", "optimizeSinglePath: " + sb.toString());
     }
 
     private void optimizeSinglePath(Destination u, Destination d, List<Destination> visited,
@@ -385,7 +381,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         @Override
         protected Void doInBackground(Void... voids) {
             optimizeFromAllPossiblePaths();
-            Log.d(TAG, "doInBackground: finished path optimization");
             return null;
         }
 
