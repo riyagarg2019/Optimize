@@ -274,7 +274,7 @@ public class MapActivity extends AppCompatActivity
         if (location != null) {
             currentLocation = location;
             currentDestination = new Destination("Current location",
-                    location.getLongitude(),
+                    location.getLatitude(),
                     location.getLongitude());
 
             locationManager.removeUpdates(this);
