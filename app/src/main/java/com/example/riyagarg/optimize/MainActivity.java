@@ -141,9 +141,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         if(remainingDirectionsAPICalls == 0) {
                             printAdjList();
-                            //new MainActivity.AsyncTSPTask().execute();
-                            optimizeFromAllPossiblePaths();
-                            Log.w("opt path", optPath.toString());
+                            new MainActivity.AsyncTSPTask().execute();
                         }
                     }
 
