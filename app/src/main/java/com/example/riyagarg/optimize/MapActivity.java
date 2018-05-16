@@ -238,10 +238,8 @@ public class MapActivity extends AppCompatActivity
         if (id == R.id.nav_to_main_activity) {
             launchMainActivity();
         }
-        else {
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            drawer.closeDrawer(GravityCompat.START);
-        }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
