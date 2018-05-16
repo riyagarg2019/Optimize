@@ -1,6 +1,7 @@
 package com.example.riyagarg.optimize;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -27,7 +28,9 @@ import android.widget.Toast;
 import com.data.AppDatabase;
 import com.data.Destination;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
@@ -37,8 +40,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -58,6 +63,8 @@ public class MapActivity extends AppCompatActivity
     private Destination currentDestination;
     private boolean isCurrentDestSet = false;
     private boolean initLocationInMapCallback = false;
+    private FusedLocationProviderClient mFusedLocationClient;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,12 +95,44 @@ public class MapActivity extends AppCompatActivity
     }
 
     private void launchMainActivity() {
-        Intent intent = new Intent(MapActivity.this, MainActivity.class);
+        final Intent intent = new Intent(MapActivity.this, MainActivity.class);
 
-        Bundle extras = new Bundle();
-        extras.putSerializable(CURRENT_LOC, currentDestination);
-        intent.putExtras(extras);
-        startActivity(intent);
+        if(currentDestination == null &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_DENIED) {
+            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if(location != null) {
+                                Log.d("DEBUG", "onSuccess: found location via fused");
+                                Bundle extras = new Bundle();
+                                extras.putSerializable(CURRENT_LOC, (Serializable) new Destination("Current Location",
+                                        location.getLatitude(), location.getLongitude()));
+                                intent.putExtras(extras);
+                                startActivity(intent);
+                            } else {
+                                Log.d("DEBUG", "launchMainActivity: fused location");
+
+                                showLocationError();
+                            }
+                        }
+                    });
+        } else if(currentDestination != null) {
+            Bundle extras = new Bundle();
+            extras.putSerializable(CURRENT_LOC, (Serializable) currentDestination);
+            intent.putExtras(extras);
+            startActivity(intent);
+        } else {
+            Log.d("DEBUG", "launchMainActivity: final else");
+            showLocationError();
+        }
+
+    }
+
+    private void showLocationError() {
+        Toast.makeText(this, "Unable to obtain your location, make sure location tracking is turned on in the settings.", Toast.LENGTH_SHORT).show();
     }
 
     private void initNavigationDrawer(Toolbar toolbar) {
@@ -109,12 +148,14 @@ public class MapActivity extends AppCompatActivity
 
     private void requestNeededPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
+                PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 // Toast...
             }
 
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION},
                     101);
         } else {
             startLocationMonitoring();
@@ -257,8 +298,7 @@ public class MapActivity extends AppCompatActivity
 
     private void startLocationMonitoring() {
         try {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-            //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
         }catch (SecurityException e) {
             e.printStackTrace();
         }
@@ -270,6 +310,7 @@ public class MapActivity extends AppCompatActivity
 
     @Override
     public void onLocationChanged(Location location) {
+        Log.d("DEBUT", "onLocationChanged: ");
         if (location != null) {
             currentLocation = location;
             currentDestination = new Destination("Current location",
