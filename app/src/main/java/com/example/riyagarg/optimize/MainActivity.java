@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private List<Destination> optPath;
     private float optSum;
     private FABProgressCircle pcFAB;
+    private Destination currentDestination;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,13 +77,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         destAdjList = new HashMap<>();
         pcFAB = findViewById(R.id.fabProgressCircle);
-
+        currentDestination = (Destination) getIntent().getSerializableExtra("CURRENT_LOC");
 
         initRetrofit();
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("entered here", "!");
                 pcFAB.show();
                 buildDestAdjList();
             }
@@ -102,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void buildDestAdjList() {
         List<Destination> destinationList = destinationRecyclerAdapter.getDestinationList();
+        destinationList.add(currentDestination);
         remainingDirectionsAPICalls = destinationList.size() * (destinationList.size() - 1);
 
         for (int i = 0; i < destinationList.size(); i++) {
@@ -276,7 +279,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         optSum = Float.MAX_VALUE;
         for (Destination s: destAdjList.keySet()) {
             for (DistanceToDestination d: destAdjList.get(s)) {
-                optimizeSinglePathSetup(s,d.getStop());
+                if (d.getStop() != currentDestination) {
+                    optimizeSinglePathSetup(s, d.getStop());
+                }
             }
         }
         Log.w("optSum", String.valueOf(optSum));
@@ -302,7 +307,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     List<Destination> localPath, StringBuilder path, float sum) {
         visited.add(u);
 
-        if (u.getLocation().equals(d.getLocation()) && localPath.size() == destAdjList.keySet().size())
+        if (u.getLocation().equals(d.getLocation()) && localPath.size() == destAdjList.keySet().size()
+                && localPath.get(0) == currentDestination)
         {
             path.append(localPath.toString());
             path.append(sum);
