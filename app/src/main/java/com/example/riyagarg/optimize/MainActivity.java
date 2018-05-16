@@ -28,6 +28,7 @@ import com.data.AppDatabase;
 import com.data.Destination;
 import com.data.DistanceToDestination;
 import com.data.directions.DirectionResult;
+import com.github.jorgecastilloprz.FABProgressCircle;
 import com.network.DirectionsAPI;
 import com.task.AsyncTSPTask;
 import com.touch.DestinationTouchHelperCallback;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private int remainingDirectionsAPICalls;
     private List<Destination> optPath;
     private float optSum;
+    private FABProgressCircle pcFAB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         saveThatItWasStarted();
 
         destAdjList = new HashMap<>();
+        pcFAB = findViewById(R.id.fabProgressCircle);
 
 
         initRetrofit();
@@ -80,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                pcFAB.show();
                 buildDestAdjList();
             }
         });
@@ -359,6 +363,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private class AsyncTSPTask extends AsyncTask<Void, Void, Void> {
 
+
         @Override
         protected Void doInBackground(Void... voids) {
             optimizeFromAllPossiblePaths();
@@ -368,6 +373,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            pcFAB.hide();
             Intent intent = new Intent(MainActivity.this, ResultsActivity.class);
             intent.putExtra(LIST, (Serializable) optPath);
             startActivity(intent);
