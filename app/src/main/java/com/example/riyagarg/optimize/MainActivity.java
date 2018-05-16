@@ -108,15 +108,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void buildDestAdjList() {
         List<Destination> destinationList = destinationRecyclerAdapter.getDestinationList();
-        destinationList.add(currentDestination);
-        totalDirectionAPICalls = destinationList.size() * (destinationList.size() - 1);
+        List<Destination> calcDestinationList = new LinkedList<>(destinationList);
+        calcDestinationList.add(currentDestination);
+        totalDirectionAPICalls = calcDestinationList.size() * (calcDestinationList.size() - 1);
         failedDirectionAPICalls = 0;
         successfulDirectionAPICalls = 0;
-        for (int i = 0; i < destinationList.size(); i++) {
-            destAdjList.put(destinationList.get(i), new ArrayList<DistanceToDestination>());
-            for (int j = 0; j < destinationList.size(); j++) {
+        for (int i = 0; i < calcDestinationList.size(); i++) {
+            destAdjList.put(calcDestinationList.get(i), new ArrayList<DistanceToDestination>());
+            for (int j = 0; j < calcDestinationList.size(); j++) {
                 if(i != j) {
-                    queryRetrofit(destinationList.get(i), destinationList.get(j));
+                    queryRetrofit(calcDestinationList.get(i), calcDestinationList.get(j));
                 }
             }
         }
