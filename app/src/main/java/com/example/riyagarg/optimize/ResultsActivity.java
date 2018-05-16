@@ -109,7 +109,7 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
             LatLngBounds bounds = builder.build();
             int width = getResources().getDisplayMetrics().widthPixels;
             int height = getResources().getDisplayMetrics().heightPixels;
-            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds,width, height, 0));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds,width, height, 20));
 
             mMap.setTrafficEnabled(true);
         }
