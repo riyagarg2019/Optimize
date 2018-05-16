@@ -72,11 +72,7 @@ public class MapActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MapActivity.this, MainActivity.class);
-
-                Bundle extras = intent.getExtras();
-                extras.putSerializable("CURRENT_LOC", currentDestination);
-                startActivity(intent);
+                launchMainActivity();
             }
         });
         initMap();
@@ -86,6 +82,15 @@ public class MapActivity extends AppCompatActivity
                 destCount = AppDatabase.getAppDatabase(MapActivity.this).destinationDao().getNumberOfRows();
             }
         }.start();
+    }
+
+    private void launchMainActivity() {
+        Intent intent = new Intent(MapActivity.this, MainActivity.class);
+
+        Bundle extras = new Bundle();
+        extras.putSerializable("CURRENT_LOC", currentDestination);
+        intent.putExtras(extras);
+        startActivity(intent);
     }
 
     private void initNavigationDrawer(Toolbar toolbar) {
@@ -231,9 +236,7 @@ public class MapActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_to_main_activity) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-            finish();
+            launchMainActivity();
         }
         else {
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

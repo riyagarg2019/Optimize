@@ -1,7 +1,9 @@
 package com.example.riyagarg.optimize;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -27,6 +29,7 @@ import com.data.Destination;
 import com.data.DistanceToDestination;
 import com.data.directions.DirectionResult;
 import com.network.DirectionsAPI;
+import com.task.AsyncTSPTask;
 import com.touch.DestinationTouchHelperCallback;
 
 import java.io.Serializable;
@@ -138,17 +141,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         if(remainingDirectionsAPICalls == 0) {
                             printAdjList();
-                            /*
-                            for (Destination d: destAdjList.keySet()) {
-                                Log.i("destination", d.getLocation());
-                                for (DistanceToDestination s : destAdjList.get(d)) {
-                                    Log.i("source", s.getStop().getLocation());
-                                    Log.i("cost", String.valueOf(s.getDistance()));
-                                }
-                                Log.i("---------------", "----------------");
-                            } */
-                            optimizeFromAllPossiblePaths();
-                            Log.w("opt path", optPath.toString());
+                            new MainActivity.AsyncTSPTask().execute();
                         }
                     }
 
@@ -283,10 +276,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
         Log.w("optSum", String.valueOf(optSum));
-
-        Intent intent = new Intent(MainActivity.this, ResultsActivity.class);
-        intent.putExtra(LIST, (Serializable) optPath);
-        startActivity(intent);
     }
 
     public void optimizeSinglePathSetup(Destination s, Destination d)
@@ -365,6 +354,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    private class AsyncTSPTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            optimizeFromAllPossiblePaths();
+            Log.d(TAG, "doInBackground: finished path optimization");
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            Intent intent = new Intent(MainActivity.this, ResultsActivity.class);
+            intent.putExtra(LIST, (Serializable) optPath);
+            startActivity(intent);
         }
     }
 }
