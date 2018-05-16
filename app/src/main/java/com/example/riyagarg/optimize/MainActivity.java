@@ -30,7 +30,6 @@ import com.data.DistanceToDestination;
 import com.data.directions.DirectionResult;
 import com.github.jorgecastilloprz.FABProgressCircle;
 import com.network.DirectionsAPI;
-import com.task.AsyncTSPTask;
 import com.touch.DestinationTouchHelperCallback;
 
 import java.io.Serializable;
@@ -57,10 +56,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Map<Destination, List<DistanceToDestination>> destAdjList;
     private Retrofit retrofit;
     private DirectionsAPI directionsAPI;
-    private int remainingDirectionsAPICalls;
     private List<Destination> optPath;
     private float optSum;
     private FABProgressCircle pcFAB;
+    private Destination currentDestination;
+
+    //Variables for error handling in retrofit
+    private int totalDirectionAPICalls;
+    private int successfulDirectionAPICalls;
+    private int failedDirectionAPICalls;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,13 +80,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         destAdjList = new HashMap<>();
         pcFAB = findViewById(R.id.fabProgressCircle);
-
+        currentDestination = (Destination) getIntent().getSerializableExtra("CURRENT_LOC");
 
         initRetrofit();
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("entered here", "!");
                 pcFAB.show();
                 buildDestAdjList();
             }
@@ -102,8 +107,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void buildDestAdjList() {
         List<Destination> destinationList = destinationRecyclerAdapter.getDestinationList();
-        remainingDirectionsAPICalls = destinationList.size() * (destinationList.size() - 1);
-
+        destinationList.add(currentDestination);
+        totalDirectionAPICalls = destinationList.size() * (destinationList.size() - 1);
+        failedDirectionAPICalls = 0;
+        successfulDirectionAPICalls = 0;
         for (int i = 0; i < destinationList.size(); i++) {
             destAdjList.put(destinationList.get(i), new ArrayList<DistanceToDestination>());
             for (int j = 0; j < destinationList.size(); j++) {
@@ -140,12 +147,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             int distanceMetric = response.body().getRoutes().get(0).getLegs().get(0).getDuration().getValue();
                             destAdjList.get(source).add(new DistanceToDestination(stop, distanceMetric));
-                            remainingDirectionsAPICalls--;
+                            successfulDirectionAPICalls++;
+                        } else {
+                            failedDirectionAPICalls++;
                         }
 
-                        if(remainingDirectionsAPICalls == 0) {
+                        if(successfulDirectionAPICalls == totalDirectionAPICalls) {
                             printAdjList();
                             new MainActivity.AsyncTSPTask().execute();
+                        } else if(successfulDirectionAPICalls + failedDirectionAPICalls == totalDirectionAPICalls){
+                            Toast.makeText(MainActivity.this, R.string.retrofit_error, Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -276,7 +287,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         optSum = Float.MAX_VALUE;
         for (Destination s: destAdjList.keySet()) {
             for (DistanceToDestination d: destAdjList.get(s)) {
-                optimizeSinglePathSetup(s,d.getStop());
+                if (d.getStop() != currentDestination) {
+                    optimizeSinglePathSetup(s, d.getStop());
+                }
             }
         }
         Log.w("optSum", String.valueOf(optSum));
@@ -302,7 +315,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     List<Destination> localPath, StringBuilder path, float sum) {
         visited.add(u);
 
-        if (u.getLocation().equals(d.getLocation()) && localPath.size() == destAdjList.keySet().size())
+        if (u.getLocation().equals(d.getLocation()) && localPath.size() == destAdjList.keySet().size()
+                && localPath.get(0) == currentDestination)
         {
             path.append(localPath.toString());
             path.append(sum);
@@ -337,8 +351,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if(id == R.id.nav_to_add_destination) {
             Intent intent = new Intent(this, MapActivity.class);
             startActivity(intent);
-        } else if(id == R.id.nav_to_optimize) {
-            //Start async task
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
