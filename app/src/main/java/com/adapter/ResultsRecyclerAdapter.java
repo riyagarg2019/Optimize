@@ -16,16 +16,17 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by riyagarg on 5/9/18.
+ * Created by riyagarg on 5/15/18.
  */
 
-public class DestinationRecyclerAdapter extends RecyclerView.Adapter<DestinationRecyclerAdapter.ViewHolder>
-        implements DestinationTouchHelperAdapter {
+public class ResultsRecyclerAdapter extends RecyclerView.Adapter<com.adapter.DestinationRecyclerAdapter.ViewHolder>
+            implements DestinationTouchHelperAdapter {
 
     private List<Destination> destinationList;
+    private List<String> stringDestinationList;
     private Context context;
 
-    public DestinationRecyclerAdapter(List<Destination> dests, Context context){
+    public ResultsRecyclerAdapter(List<Destination> dests, Context context){
         destinationList = dests;
         this.context = context;
     }
@@ -36,22 +37,22 @@ public class DestinationRecyclerAdapter extends RecyclerView.Adapter<Destination
     }
 
     public List<Destination> getDestinationList() {
-        /*for(int i = 0; i < destinationList.size(); i++){
-            stringDestinationList.add((destinationList.get(i)).toString());
-        }*/
+    /*for(int i = 0; i < destinationList.size(); i++){
+        stringDestinationList.add((destinationList.get(i)).toString());
+    }*/
 
         return destinationList;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public com.adapter.DestinationRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View viewRow = LayoutInflater.from(parent.getContext()).inflate(R.layout.place_row, parent, false);
 
-        return new ViewHolder(viewRow);
+        return new com.adapter.DestinationRecyclerAdapter.ViewHolder(viewRow);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(com.adapter.DestinationRecyclerAdapter.ViewHolder holder, int position) {
 
         holder.tvLocation.setText(destinationList.get(holder.getAdapterPosition()).getLocation());
 
@@ -114,7 +115,7 @@ public class DestinationRecyclerAdapter extends RecyclerView.Adapter<Destination
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        public TextView tvLocation;
+        private TextView tvLocation;
         private TextView tvDescription;
 
 
@@ -127,3 +128,5 @@ public class DestinationRecyclerAdapter extends RecyclerView.Adapter<Destination
         }
     }
 }
+
+
