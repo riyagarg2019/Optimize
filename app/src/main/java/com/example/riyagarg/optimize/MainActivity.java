@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void buildDestAdjList() {
         List<Destination> destinationList = destinationRecyclerAdapter.getDestinationList();
-        List<Destination> calcDestinationList = destinationList;
+        List<Destination> calcDestinationList = new LinkedList<>(destinationList);
         calcDestinationList.add(currentDestination);
         totalDirectionAPICalls = calcDestinationList.size() * (calcDestinationList.size() - 1);
         failedDirectionAPICalls = 0;
