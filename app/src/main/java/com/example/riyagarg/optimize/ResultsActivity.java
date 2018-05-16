@@ -85,8 +85,6 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
             for (int i = 0; i < destinationList.size(); i++) {
                 if (i != destinationList.size() - 1) {
                     polyLineOpts = new PolylineOptions().add(positionList.get(i), positionList.get(i + 1)); ////draw lines based on optimized positions
-                } else {
-                    polyLineOpts = new PolylineOptions().add(positionList.get(destinationList.size() - 1), positionList.get(0));
                 }
                 Polyline polyline = mMap.addPolyline(polyLineOpts);
                 polyline.setColor(Color.GREEN);
