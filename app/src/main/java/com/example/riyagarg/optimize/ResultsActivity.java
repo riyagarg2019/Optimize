@@ -8,11 +8,11 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.widget.Toast;
-
 import com.adapter.DestinationRecyclerAdapter;
 import com.adapter.ResultsRecyclerAdapter;
 import com.data.AppDatabase;
@@ -38,8 +38,9 @@ import java.util.Locale;
 public class ResultsActivity extends AppCompatActivity implements LocationListener,
         OnMapReadyCallback {
 
+    private GoogleMap mMap;
     private List<Destination> destinationList;
-    public List<Marker> markerList = new LinkedList<>();
+    private List<Marker> markerList = new LinkedList<>();
     private List<LatLng> positionList = new LinkedList<>();
     private PolylineOptions polyLineOpts;
     private LatLngBounds.Builder builder = new LatLngBounds.Builder();
@@ -49,14 +50,14 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
-
         destinationList = (List<Destination>) getIntent().getSerializableExtra("LIST");
+        Log.d("Results", "onCreate: " + destinationList);
 
-        //MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
-
-        //mapFragment.getMapAsync(ResultsActivity.this);
-
-
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(ResultsActivity.this);
+        //destinationList = getIntent().getStringArrayExtra(MainActivity.DESTINATION_LIST);
         setRecyclerView();
 
     }
@@ -83,11 +84,10 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        GoogleMap mMap = googleMap;
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(47, 19)));
+        mMap = googleMap;
 
 
-
+        if(destinationList.size() != 0) {
             for (int i = 0; i < destinationList.size(); i++) {
                 LatLng position = new LatLng(destinationList.get(i).getLat(), destinationList.get(i).getLng());
                 positionList.add(position);
@@ -106,14 +106,13 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
                 builder.include(positionList.get(i));
             }
 
-            if(positionList.size() != 0) {
-                LatLngBounds bounds = builder.build();
+            LatLngBounds bounds = builder.build();
+            int width = getResources().getDisplayMetrics().widthPixels;
+            int height = getResources().getDisplayMetrics().heightPixels;
+            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds,width, height, 20));
 
-                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
-                mMap.setTrafficEnabled(true);
-            }
-
-
+            mMap.setTrafficEnabled(true);
+        }
 
 
         /*mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {

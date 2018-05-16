@@ -8,4 +8,8 @@
     <string name="api_key">AIzaSyAm3bRUh5RWzUHGbTRcQtcMsxvBQ_E1aMw</string>
     <string name="no_route_between_locations_error">Unfortunately, there is no route between %1 and %2. Please delete
     one of the locations and try again.</string>
+    <string name="title_activity_loading">LoadingActivity</string>
+    <string name="cruching_the_numbers">Cruching the Numbers!</string>
+    <string name="my_destinations">My Destinations</string>
+    <string name="optimize_route">Optimize route</string>
 </resources>
