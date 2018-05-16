@@ -54,6 +54,7 @@ public class DestinationRecyclerAdapter extends RecyclerView.Adapter<Destination
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         holder.tvLocation.setText(destinationList.get(holder.getAdapterPosition()).getLocation());
+        //holder.tvNumber.setText((destinationList.get(holder.getAdapterPosition())).toString());
 
     }
 
@@ -115,13 +116,13 @@ public class DestinationRecyclerAdapter extends RecyclerView.Adapter<Destination
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         public TextView tvLocation;
-        private TextView tvDescription;
+        public TextView tvNumber;
 
 
         public ViewHolder(View itemView){
             super(itemView);
             tvLocation = itemView.findViewById(R.id.tvLocation);
-            tvDescription = itemView.findViewById(R.id.tvDescription);
+            tvNumber = itemView.findViewById(R.id.tvNumber);
 
 
         }
