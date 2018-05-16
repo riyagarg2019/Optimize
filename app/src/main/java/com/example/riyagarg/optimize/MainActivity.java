@@ -30,7 +30,6 @@ import com.data.DistanceToDestination;
 import com.data.directions.DirectionResult;
 import com.github.jorgecastilloprz.FABProgressCircle;
 import com.network.DirectionsAPI;
-import com.task.AsyncTSPTask;
 import com.touch.DestinationTouchHelperCallback;
 
 import java.io.Serializable;
@@ -57,10 +56,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Map<Destination, List<DistanceToDestination>> destAdjList;
     private Retrofit retrofit;
     private DirectionsAPI directionsAPI;
-    private int remainingDirectionsAPICalls;
     private List<Destination> optPath;
     private float optSum;
     private FABProgressCircle pcFAB;
+
+    //Variables for error handling in retrofit
+    private int totalDirectionAPICalls;
+    private int successfulDirectionAPICalls;
+    private int failedDirectionAPICalls;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +105,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void buildDestAdjList() {
         List<Destination> destinationList = destinationRecyclerAdapter.getDestinationList();
-        remainingDirectionsAPICalls = destinationList.size() * (destinationList.size() - 1);
+        totalDirectionAPICalls = destinationList.size() * (destinationList.size() - 1);
+        failedDirectionAPICalls = 0;
+        successfulDirectionAPICalls = 0;
 
         for (int i = 0; i < destinationList.size(); i++) {
             destAdjList.put(destinationList.get(i), new ArrayList<DistanceToDestination>());
@@ -140,12 +145,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             int distanceMetric = response.body().getRoutes().get(0).getLegs().get(0).getDuration().getValue();
                             destAdjList.get(source).add(new DistanceToDestination(stop, distanceMetric));
-                            remainingDirectionsAPICalls--;
+                            successfulDirectionAPICalls++;
+                        } else {
+                            failedDirectionAPICalls++;
                         }
 
-                        if(remainingDirectionsAPICalls == 0) {
+                        if(successfulDirectionAPICalls == totalDirectionAPICalls) {
                             printAdjList();
                             new MainActivity.AsyncTSPTask().execute();
+                        } else if(successfulDirectionAPICalls + failedDirectionAPICalls == totalDirectionAPICalls){
+                            Toast.makeText(MainActivity.this, R.string.retrofit_error, Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -337,8 +346,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if(id == R.id.nav_to_add_destination) {
             Intent intent = new Intent(this, MapActivity.class);
             startActivity(intent);
-        } else if(id == R.id.nav_to_optimize) {
-            //Start async task
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -12,4 +12,5 @@
     <string name="cruching_the_numbers">Cruching the Numbers!</string>
     <string name="my_destinations">My Destinations</string>
     <string name="optimize_route">Optimize route</string>
+    <string name="retrofit_error">Unable to find a route from each place to every other place. Please ensure all your destinations are accessible from each other.</string>
 </resources>
