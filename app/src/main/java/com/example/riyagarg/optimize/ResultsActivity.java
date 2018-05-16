@@ -8,6 +8,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.util.Log;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -114,35 +115,6 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
             mMap.setTrafficEnabled(true);
         }
 
-
-        /*mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                try {
-                    Geocoder gc = new Geocoder(ResultsActivity.this, Locale.getDefault());
-                    List<Address> addrs = null; //set this equal to our list of addresses
-
-                    addrs = gc.getFromLocation(latLng.latitude, latLng.longitude, 2);
-
-                    mMap.addMarker(
-                            new MarkerOptions().
-                                    position(latLng).
-                                    title("Marker").
-                                    snippet(
-                                            addrs.get(0).getAddressLine(0)+"\n"+
-                                                    addrs.get(0).getAddressLine(1)+"\n"+
-                                                    addrs.get(0).getAddressLine(2)
-                                    ));
-
-                }catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });*/
-
-
-
-
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
             public void onMarkerDragStart(Marker marker) {
@@ -156,13 +128,8 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
-                //marker.getPosition().latitude
             }
         });
-
-
-       // mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
-
     }
 
     private void setRecyclerView() {
@@ -170,6 +137,11 @@ public class ResultsActivity extends AppCompatActivity implements LocationListen
         recyclerViewResults.setHasFixedSize(true);
         recyclerViewResults.setLayoutManager(new LinearLayoutManager(this));
         initDestinations(recyclerViewResults);
+
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(recyclerViewResults.getContext(),
+                LinearLayoutManager.VERTICAL);
+
+        recyclerViewResults.addItemDecoration(itemDecoration);
     }
 
     public void initDestinations(final RecyclerView recyclerView) {

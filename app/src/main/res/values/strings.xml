@@ -13,4 +13,5 @@
     <string name="my_destinations">My Destinations</string>
     <string name="optimize_route">Optimize route</string>
     <string name="retrofit_error">Unable to find a route from each place to every other place. Please ensure all your destinations are accessible from each other.</string>
+    <string name="delete_all">Delete all</string>
 </resources>
