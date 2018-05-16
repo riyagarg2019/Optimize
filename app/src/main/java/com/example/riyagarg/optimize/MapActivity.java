@@ -1,7 +1,6 @@
 package com.example.riyagarg.optimize;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -29,7 +28,6 @@ import com.data.AppDatabase;
 import com.data.Destination;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
@@ -42,11 +40,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 
 public class MapActivity extends AppCompatActivity
@@ -214,7 +208,7 @@ public class MapActivity extends AppCompatActivity
                     dest.putString(ADDR, place.getAddress().toString());
                     DialogFragment newDialog = new AddDestinationDialog();
                     newDialog.setArguments(dest);
-                    newDialog.show(getSupportFragmentManager(), "Add Destination");
+                    newDialog.show(getSupportFragmentManager(), getString(R.string.add_destination));
                 }
             }
 
@@ -292,7 +286,7 @@ public class MapActivity extends AppCompatActivity
                     new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 12.0f
             ));
 
-            googleMap.addMarker(new MarkerOptions().position(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())).title("Your location"));
+            googleMap.addMarker(new MarkerOptions().position(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())).title(getString(R.string.your_location)));
         }
     }
 
@@ -313,7 +307,7 @@ public class MapActivity extends AppCompatActivity
         Log.d("DEBUT", "onLocationChanged: ");
         if (location != null) {
             currentLocation = location;
-            currentDestination = new Destination("Current location",
+            currentDestination = new Destination(getString(R.string.current_location),
                     location.getLatitude(),
                     location.getLongitude());
 
@@ -328,7 +322,7 @@ public class MapActivity extends AppCompatActivity
                     new LatLng(location.getLatitude(), location.getLongitude()), 12.0f
             ));
             isCurrentDestSet = true;
-            googleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Your location"));
+            googleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title(getString(R.string.your_location)));
         } else {
             initLocationInMapCallback = true;
         }

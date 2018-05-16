@@ -21,4 +21,8 @@
     <string name="permission_not_granted">Permission not granted :(</string>
     <string name="unknown_error_retrofit">Something went wrong. Check the logs</string>
     <string name="location_error">Unable to obtain your location, make sure location tracking is turned on in the settings.</string>
+    <string name="destinations_db">Destinations</string>
+    <string name="add_destination">Add Destination</string>
+    <string name="your_location">Your location</string>
+    <string name="current_location">Current location</string>
 </resources>

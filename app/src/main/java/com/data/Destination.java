@@ -60,11 +60,5 @@ public class Destination implements Serializable {
     @Override
     public String toString() {
             return "Destination{ "+ location + "}";
-//        return "Destination{" +
-//                "destinationId=" + destinationId +
-//                ", location='" + location + '\'' +
-//                ", lat=" + lat +
-//                ", lng=" + lng +
-//                '}';
     }
 }
