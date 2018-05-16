@@ -38,30 +38,20 @@ public class ResultsRecyclerAdapter extends RecyclerView.Adapter<com.adapter.Des
     }
 
     public List<Destination> getDestinationList() {
-    /*for(int i = 0; i < destinationList.size(); i++){
-        stringDestinationList.add((destinationList.get(i)).toString());
-    }*/
-
         return destinationList;
     }
 
     @Override
     public com.adapter.DestinationRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View viewRow = LayoutInflater.from(parent.getContext()).inflate(R.layout.place_row, parent, false);
-
         return new com.adapter.DestinationRecyclerAdapter.ViewHolder(viewRow);
     }
 
     @Override
     public void onBindViewHolder(com.adapter.DestinationRecyclerAdapter.ViewHolder holder, int position) {
-
         holder.tvLocation.setText(destinationList.get(holder.getAdapterPosition()).getLocation());
-
         holder.tvNumber.setText(String.valueOf(position + 1) + ".");
-
     }
-
-
 
     public void addDestination(Destination dest) {
         destinationList.add(dest);
@@ -94,13 +84,10 @@ public class ResultsRecyclerAdapter extends RecyclerView.Adapter<com.adapter.Des
         private TextView tvLocation;
         private TextView tvNumber;
 
-
         public ViewHolder(View itemView){
             super(itemView);
             tvLocation = itemView.findViewById(R.id.tvLocation);
             tvNumber = itemView.findViewById(R.id.tvNumber);
-
-
         }
     }
 }

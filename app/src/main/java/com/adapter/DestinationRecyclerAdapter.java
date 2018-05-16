@@ -36,26 +36,18 @@ public class DestinationRecyclerAdapter extends RecyclerView.Adapter<Destination
     }
 
     public List<Destination> getDestinationList() {
-        /*for(int i = 0; i < destinationList.size(); i++){
-            stringDestinationList.add((destinationList.get(i)).toString());
-        }*/
-
         return destinationList;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View viewRow = LayoutInflater.from(parent.getContext()).inflate(R.layout.place_row, parent, false);
-
         return new ViewHolder(viewRow);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
         holder.tvLocation.setText(destinationList.get(holder.getAdapterPosition()).getLocation());
-        //holder.tvNumber.setText((destinationList.get(holder.getAdapterPosition())).toString());
-
     }
 
     public void addDestination(Destination dest) {
@@ -67,7 +59,6 @@ public class DestinationRecyclerAdapter extends RecyclerView.Adapter<Destination
         int editPos = findPlaceIndexByDestinationId(dest.getDestinationId());
         destinationList.set(editPos,dest);
         notifyItemChanged(editPos);
-
     }
 
     private int findPlaceIndexByDestinationId(long todoId){
@@ -96,7 +87,6 @@ public class DestinationRecyclerAdapter extends RecyclerView.Adapter<Destination
                 AppDatabase.getAppDatabase(context).destinationDao().delete(Remove);
             }
         }.start();
-
     }
 
     @Override
@@ -111,7 +101,6 @@ public class DestinationRecyclerAdapter extends RecyclerView.Adapter<Destination
             }
         }
         notifyItemMoved(fromPosition, toPosition);
-
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
@@ -123,8 +112,6 @@ public class DestinationRecyclerAdapter extends RecyclerView.Adapter<Destination
             super(itemView);
             tvLocation = itemView.findViewById(R.id.tvLocation);
             tvNumber = itemView.findViewById(R.id.tvNumber);
-
-
         }
     }
 }
